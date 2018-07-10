@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 26
@@ -32,3 +33,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+publish {
+    userOrg = 'linwg1988'
+    groupId = 'org.linwg1988'
+    artifactId = 'lcardview'
+    publishVersion = '1.0'
+    desc = 'A libary user for custom a card view.'
+    website = 'https://github.com/linwg1988/LCardView'
+}
+

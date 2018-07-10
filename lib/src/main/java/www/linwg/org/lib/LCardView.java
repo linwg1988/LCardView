@@ -469,6 +469,7 @@ public class LCardView extends FrameLayout {
         if (elevationAffectShadowColor) {
             shadowColor = Color.argb(elevation + 10, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
             colors[0] = shadowColor;
+            colorChange = true;
         }
         if (elevationAffectShadowSize) {
             leftSize = rightSize = bottomSize = topSize = elevation + 12;
