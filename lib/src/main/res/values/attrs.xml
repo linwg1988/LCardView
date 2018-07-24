@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="LCardView">
+
         <attr name="leftShadowWidth" format="dimension"/>
         <attr name="topShadowHeight" format="dimension"/>
         <attr name="rightShadowWidth" format="dimension"/>
         <attr name="bottomShadowHeight" format="dimension"/>
+        <attr name="shadowSize" format="dimension"/>
         <attr name="shadowColor" format="color"/>
+        <attr name="shadowStartAlpha" format="integer"/>
+        <attr name="shadowFluidShape" format="enum">
+            <enum name="adsorption" value="0"/>
+            <enum name="linear" value="1"/>
+        </attr>
         <attr name="cardBackgroundColor" format="color"/>
         <attr name="cornerRadius" format="dimension"/>
         <attr name="leftTopCornerRadius" format="dimension"/>

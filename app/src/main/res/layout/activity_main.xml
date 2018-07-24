@@ -14,7 +14,12 @@
 
         <www.linwg.org.lib.LCardView
             android:id="@+id/cardView"
-            android:layout_width="290dp"
+            android:layout_width="280dp"
+            app:cornerRadius="10dp"
+            app:shadowSize="20dp"
+            app:shadowFluidShape="adsorption"
+            app:shadowStartAlpha="4"
+            app:shadowColor="#f00"
             android:layout_height="218dp"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp">
