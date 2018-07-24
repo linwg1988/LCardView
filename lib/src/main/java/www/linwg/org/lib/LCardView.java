@@ -586,7 +586,7 @@ public class LCardView extends FrameLayout {
     }
 
     public void setShadowFluidShape(int shape){
-        if(shape != ADSORPTION || shape != LINEAR){
+        if(shape != ADSORPTION && shape != LINEAR){
             return;
         }
         this.shadowFluidShape = shape;

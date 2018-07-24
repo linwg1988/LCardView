@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         CheckBox cbSize = findViewById(R.id.cbSize);
         CheckBox cbShowPic = findViewById(R.id.cbShowPic);
         final CheckBox cbColor = findViewById(R.id.cbColor);
+        final CheckBox cbMode = findViewById(R.id.cbMode);
         final EditText etColor = findViewById(R.id.etColor);
         final Button btnSure = findViewById(R.id.btnSure);
         final ImageView ivGirl = findViewById(R.id.ivGirl);
@@ -226,6 +227,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 cardView.setElevationAffectShadowColor(isChecked);
+            }
+        });
+        cbMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardView.setShadowFluidShape(isChecked ? LCardView.LINEAR : LCardView.ADSORPTION);
             }
         });
         cbShowPic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
