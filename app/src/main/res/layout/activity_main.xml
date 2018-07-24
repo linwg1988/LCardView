@@ -26,6 +26,7 @@
                 android:gravity="center"
                 android:text="我是文本"
                 android:textColor="#0aa"
+                android:visibility="gone"
                 android:textSize="15sp" />
 
             <ImageView

@@ -4,7 +4,7 @@ apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion 26
 
-
+    publishNonDefault true
 
     defaultConfig {
         minSdkVersion 15
@@ -38,7 +38,7 @@ publish {
     userOrg = 'linwg1988'
     groupId = 'org.linwg1988'
     artifactId = 'lcardview'
-    publishVersion = '1.0'
+    publishVersion = '1.1'
     desc = 'A libary user for custom a card view.'
     website = 'https://github.com/linwg1988/LCardView'
 }

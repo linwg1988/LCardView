@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -12,22 +13,23 @@ import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Shader;
-import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import www.linwg.org.lcardview.R;
+
 public class LCardView extends FrameLayout {
 
     private final int defaultShadowSize = 12;
     private int elevation = 0;
     private int leftSize = defaultShadowSize, topSize = defaultShadowSize, rightSize = defaultShadowSize, bottomSize = defaultShadowSize;
-    private GradientDrawable t, r, b, l;
+    //    private GradientDrawable t, r, b, l;
     private int defaultShadowColor = Color.parseColor("#05000000");
     private int defaultCardBackgroundColor = Color.WHITE;
-    private int[] colors = new int[]{defaultShadowColor, Color.parseColor("#00000000")};
+    private int[] colors = new int[]{defaultShadowColor, defaultShadowColor, Color.parseColor("#00000000"), Color.parseColor("#00000000")};
     private int shadowColor = defaultShadowColor;
     private int cardBackgroundColor = defaultCardBackgroundColor;
     private int cornerRadius = 0;
@@ -48,8 +50,10 @@ public class LCardView extends FrameLayout {
     RadialGradient rtrg;
     RadialGradient rbrg;
     RadialGradient lbrg;
+    LinearGradient t, r, b, l;
     private int shadowAlpha = 10;
     boolean colorChange = false;
+    float percent = 0.3f;
 
     public LCardView(@NonNull Context context) {
         this(context, null);
@@ -107,7 +111,9 @@ public class LCardView extends FrameLayout {
 
         shadowColor = Color.argb(elevationAffectShadowColor ? (elevation + 10) : shadowAlpha, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
         colors[0] = shadowColor;
-        colors[1] = Color.argb(00, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
+        colors[1] = Color.argb(Color.alpha(shadowColor) / 5, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
+        colors[2] = Color.argb(00, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
+        colors[3] = Color.argb(00, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
 
         if (elevationAffectShadowSize) {
             leftSize = rightSize = bottomSize = topSize = elevation + 12;
@@ -153,63 +159,81 @@ public class LCardView extends FrameLayout {
         if (min == 0) {
             ltrg = null;
         } else {
-            ltrg = new RadialGradient(leftSize + leftTopCornerRadius, topSize + leftTopCornerRadius, min, colors, new float[]{leftTopCornerRadius / (float) min, 1}, Shader.TileMode.CLAMP);
+            float start = leftTopCornerRadius / (float) min;
+            float center = (1 - start) * percent + start;
+            float center2 = (1 - center) / 2 + center;
+            ltrg = new RadialGradient(leftSize + leftTopCornerRadius, topSize + leftTopCornerRadius, min, colors, new float[]{start, center,center2, 1}, Shader.TileMode.CLAMP);
         }
 
         int min2 = Math.min(rightSize + rightTopCornerRadius, topSize + rightTopCornerRadius);
         if (min2 == 0) {
             rtrg = null;
         } else {
-            rtrg = new RadialGradient(viewWidth - rightSize - rightTopCornerRadius, topSize + rightTopCornerRadius, min2, colors, new float[]{rightTopCornerRadius / (float) min2, 1}, Shader.TileMode.CLAMP);
+            float start = rightTopCornerRadius / (float) min2;
+            float center = (1 - start) * percent + start;
+            float center2 = (1 - center) / 2 + center;
+            rtrg = new RadialGradient(viewWidth - rightSize - rightTopCornerRadius, topSize + rightTopCornerRadius, min2, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
         }
 
         int min3 = Math.min(rightSize + rightBottomCornerRadius, bottomSize + rightBottomCornerRadius);
         if (min3 == 0) {
             rbrg = null;
         } else {
-            rbrg = new RadialGradient(viewWidth - rightSize - rightBottomCornerRadius, viewHeight - bottomSize - rightBottomCornerRadius, min3, colors, new float[]{rightBottomCornerRadius / (float) min3, 1}, Shader.TileMode.CLAMP);
+            float start = rightBottomCornerRadius / (float) min3;
+            float center = (1 - start) * percent + start;
+            float center2 = (1 - center) / 2 + center;
+            rbrg = new RadialGradient(viewWidth - rightSize - rightBottomCornerRadius, viewHeight - bottomSize - rightBottomCornerRadius, min3, colors, new float[]{start, center,center2, 1}, Shader.TileMode.CLAMP);
         }
 
         int min4 = Math.min(leftSize + leftBottomCornerRadius, bottomSize + leftBottomCornerRadius);
         if (min4 == 0) {
             lbrg = null;
         } else {
-            lbrg = new RadialGradient(leftSize + leftBottomCornerRadius, viewHeight - bottomSize - leftBottomCornerRadius, min4, colors, new float[]{leftBottomCornerRadius / (float) min4, 1}, Shader.TileMode.CLAMP);
+            float start = leftBottomCornerRadius / (float) min4;
+            float center = (1 - start) * percent + start;
+            float center2 = (1 - center) / 2 + center;
+            lbrg = new RadialGradient(leftSize + leftBottomCornerRadius, viewHeight - bottomSize - leftBottomCornerRadius, min4, colors, new float[]{start, center,center2, 1}, Shader.TileMode.CLAMP);
         }
 
-        if (t == null || colorChange) {
-            t = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, colors);
-            t.setShape(GradientDrawable.RECTANGLE);
-            t.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        }
-        t.setBounds(leftSize + leftTopCornerRadius, 0, viewWidth - rightSize - rightTopCornerRadius, topSize);
+        t = new LinearGradient(leftSize + leftTopCornerRadius, topSize, leftSize + leftTopCornerRadius, 0, colors, new float[]{0, percent,(1-percent)/2+percent, 1}, Shader.TileMode.CLAMP);
 
+        r = new LinearGradient(viewWidth - rightSize, topSize + rightTopCornerRadius, viewWidth, topSize + rightTopCornerRadius, colors, new float[]{0, percent,(1-percent)/2+percent, 1}, Shader.TileMode.CLAMP);
 
-        if (r == null || colorChange) {
-            r = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
-            r.setShape(GradientDrawable.RECTANGLE);
-            r.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        }
-        r.setBounds(viewWidth - rightSize, topSize + rightTopCornerRadius, viewWidth, viewHeight - bottomSize - rightBottomCornerRadius);
+        b = new LinearGradient(leftSize + leftBottomCornerRadius, viewHeight - bottomSize, leftSize + leftBottomCornerRadius, viewHeight, colors, new float[]{0, percent,(1-percent)/2+percent, 1}, Shader.TileMode.CLAMP);
 
+        l = new LinearGradient(leftSize, topSize + leftTopCornerRadius, 0, topSize + leftTopCornerRadius, colors, new float[]{0, percent,(1-percent)/2+percent, 1}, Shader.TileMode.CLAMP);
+//        if (t == null || colorChange) {
+//            t.setShape(GradientDrawable.RECTANGLE);
+//            t.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+//        }
+//        t.setBounds(leftSize + leftTopCornerRadius, 0, viewWidth - rightSize - rightTopCornerRadius, topSize);
+//        t.setGradientCenter(0.5f, percent);
 
-        if (b == null || colorChange) {
-            b = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
-            b.setShape(GradientDrawable.RECTANGLE);
-            b.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        }
-        b.setBounds(leftSize + leftBottomCornerRadius, viewHeight - bottomSize, viewWidth - rightSize - rightBottomCornerRadius, viewHeight);
-
-        if (l == null || colorChange) {
-            l = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
-            l.setShape(GradientDrawable.RECTANGLE);
-            l.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        }
-        l.setBounds(0, topSize + leftTopCornerRadius, leftSize, viewHeight - bottomSize - leftBottomCornerRadius);
+//        if (r == null || colorChange) {
+//            r = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
+//            r.setShape(GradientDrawable.RECTANGLE);
+//            r.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+//        }
+//        r.setBounds(viewWidth - rightSize, topSize + rightTopCornerRadius, viewWidth, viewHeight - bottomSize - rightBottomCornerRadius);
+//
+//
+//        if (b == null || colorChange) {
+//            b = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
+//            b.setShape(GradientDrawable.RECTANGLE);
+//            b.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+//        }
+//        b.setBounds(leftSize + leftBottomCornerRadius, viewHeight - bottomSize, viewWidth - rightSize - rightBottomCornerRadius, viewHeight);
+//
+//        if (l == null || colorChange) {
+//            l = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
+//            l.setShape(GradientDrawable.RECTANGLE);
+//            l.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+//        }
+//        l.setBounds(0, topSize + leftTopCornerRadius, leftSize, viewHeight - bottomSize - leftBottomCornerRadius);
         colorChange = false;
     }
 
-    private void measureContentPath(){
+    private void measureContentPath() {
         mContentPath.reset();
         float startX = leftSize;
         float startY = topSize + leftTopCornerRadius;
@@ -257,7 +281,10 @@ public class LCardView extends FrameLayout {
         }
 
         //顶部阴影
-        t.draw(canvas);
+//        t.draw(canvas);
+        paint.setShader(t);
+        canvas.drawRect(leftSize + leftTopCornerRadius, 0, viewWidth - rightSize - rightTopCornerRadius, topSize, paint);
+
 
         //右上圆角
         xRadius = rightSize + rightTopCornerRadius;
@@ -276,7 +303,9 @@ public class LCardView extends FrameLayout {
         }
 
         //右侧阴影
-        r.draw(canvas);
+//        r.draw(canvas);
+        paint.setShader(r);
+        canvas.drawRect(viewWidth - rightSize, topSize + rightTopCornerRadius, viewWidth, viewHeight - bottomSize - rightBottomCornerRadius, paint);
 
         //右下圆角阴影
         xRadius = rightSize + rightBottomCornerRadius;
@@ -295,8 +324,9 @@ public class LCardView extends FrameLayout {
         }
 
         //底部阴影
-        b.draw(canvas);
-
+//        b.draw(canvas);
+        paint.setShader(b);
+        canvas.drawRect(leftSize + leftBottomCornerRadius, viewHeight - bottomSize, viewWidth - rightSize - rightBottomCornerRadius, viewHeight, paint);
 
         xRadius = leftSize + leftBottomCornerRadius;
         yRadius = bottomSize + leftBottomCornerRadius;
@@ -314,7 +344,9 @@ public class LCardView extends FrameLayout {
         }
 
         //左侧阴影
-        l.draw(canvas);
+//        l.draw(canvas);
+        paint.setShader(l);
+        canvas.drawRect(0, topSize + leftTopCornerRadius, leftSize, viewHeight - bottomSize - leftBottomCornerRadius, paint);
     }
 
     @Override
@@ -430,7 +462,9 @@ public class LCardView extends FrameLayout {
         int blue = Color.blue(color);
         shadowColor = Color.argb(elevationAffectShadowColor ? (elevation + 10) : shadowAlpha, red, green, blue);
         colors[0] = shadowColor;
-        colors[1] = Color.argb(00, red, green, blue);
+        colors[1] = Color.argb(Color.alpha(shadowColor) / 5, red, green, blue);
+        colors[2] = Color.argb(00, red, green, blue);
+        colors[3] = Color.argb(00, red, green, blue);
         createDrawables();
         invalidate();
     }
@@ -444,8 +478,14 @@ public class LCardView extends FrameLayout {
     public void setElevationAffectShadowColor(boolean elevationAffectShadowColor) {
         if (this.elevationAffectShadowColor != elevationAffectShadowColor) {
             this.elevationAffectShadowColor = elevationAffectShadowColor;
-            shadowColor = Color.argb(elevationAffectShadowColor ? (elevation + 10) : shadowAlpha, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
+            int red = Color.red(shadowColor);
+            int green = Color.green(shadowColor);
+            int blue = Color.blue(shadowColor);
+            shadowColor = Color.argb(elevationAffectShadowColor ? (elevation + 10) : shadowAlpha, red, green, blue);
             colors[0] = shadowColor;
+            colors[1] = Color.argb(Color.alpha(shadowColor) / 5, red, green, blue);
+            colors[2] = Color.argb(00, red, green, blue);
+            colors[3] = Color.argb(00, red, green, blue);
             colorChange = true;
             createDrawables();
             invalidate();
@@ -467,8 +507,14 @@ public class LCardView extends FrameLayout {
     public void setElevation(int elevation) {
         this.elevation = elevation;
         if (elevationAffectShadowColor) {
-            shadowColor = Color.argb(elevation + 10, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
+            int red = Color.red(shadowColor);
+            int green = Color.green(shadowColor);
+            int blue = Color.blue(shadowColor);
+            shadowColor = Color.argb(elevation + 10, red, green, blue);
             colors[0] = shadowColor;
+            colors[1] = Color.argb(Color.alpha(shadowColor) / 5, red, green, blue);
+            colors[2] = Color.argb(00, red, green, blue);
+            colors[3] = Color.argb(00, red, green, blue);
             colorChange = true;
         }
         if (elevationAffectShadowSize) {

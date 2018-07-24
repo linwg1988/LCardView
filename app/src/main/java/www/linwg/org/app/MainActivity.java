@@ -1,4 +1,4 @@
-package www.linwg.org.lcardview;
+package www.linwg.org.app;
 
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;

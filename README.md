@@ -5,7 +5,7 @@ gradle中的引用：
 ~~~Java
 gradle:
 dependencies {
-    implementation 'org.linwg1988:lcardview:1.0'
+    implementation 'org.linwg1988:lcardview:1.1'
 }
 ~~~
 
