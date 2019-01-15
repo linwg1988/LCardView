@@ -22,5 +22,7 @@
         <attr name="elevation" format="dimension"/>
         <attr name="elevationAffectShadowColor" format="boolean"/>
         <attr name="elevationAffectShadowSize" format="boolean"/>
+        <attr name="xOffset" format="dimension"/>
+        <attr name="yOffset" format="dimension"/>
     </declare-styleable>
 </resources>

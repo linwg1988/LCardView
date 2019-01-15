@@ -5,7 +5,7 @@ gradle中的引用：
 ~~~
 gradle:
 dependencies {
-    implementation 'org.linwg1988:lcardview:1.3'
+    implementation 'org.linwg1988:lcardview:1.4'
 }
 ~~~
 
@@ -14,6 +14,8 @@ dependencies {
 阴影透明度比较淡的情况下，咱又不想往包里面添加.9图片,就自己动手写了这个卡片布局。</br>
 
 **1.2.版本说明此版本新增了一些xml初始化属性，让布局在xml中更加直观。**</br>
+
+**1.4.版本说明:增加了X轴和Y轴偏移量属性,暂时只允许偏移至边缘位置。**</br>
 
 **控件存在的局限性：四边阴影大小不一的时候无法设置圆角；同理设置圆角大小**</br>
 
@@ -40,6 +42,8 @@ dependencies {
 | attr:elevation | 卡片高度 |
 | attr:elevationAffectShadowColor | 卡片高度是否影响阴影颜色 |
 | attr:elevationAffectShadowSize | 卡片高度是否影响阴影宽度 |
+| attr:xOffset | 卡片X轴偏移量 |
+| attr:yOffset | 卡片Y轴偏移量 |
 
 在Java代码中也有对应相关的属性设置方法。
 

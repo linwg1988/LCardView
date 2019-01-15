@@ -45,6 +45,7 @@ public class LCardView extends FrameLayout {
     private int viewHeight;
     private Path mPath = new Path();
     private Path mContentPath = new Path();
+    private Path mShadowPath = new Path();
     private Paint paint = new Paint();
     private Paint bgPaint = new Paint();
     private Paint pathPaint = new Paint();
@@ -55,6 +56,8 @@ public class LCardView extends FrameLayout {
     LinearGradient t, r, b, l;
     private int shadowAlpha = defaultShadowStartAlpha;
     float percent = 0.33f;
+    int xOffset = 0;
+    int yOffset = 0;
 
     public LCardView(@NonNull Context context) {
         this(context, null);
@@ -106,6 +109,10 @@ public class LCardView extends FrameLayout {
                 elevationAffectShadowColor = typedArray.getBoolean(index, false);
             } else if (index == R.styleable.LCardView_elevationAffectShadowSize) {
                 elevationAffectShadowSize = typedArray.getBoolean(index, false);
+            } else if (index == R.styleable.LCardView_xOffset) {
+                xOffset = typedArray.getDimensionPixelSize(index, 0);
+            } else if (index == R.styleable.LCardView_yOffset) {
+                yOffset = typedArray.getDimensionPixelSize(index, 0);
             }
         }
 
@@ -119,7 +126,7 @@ public class LCardView extends FrameLayout {
 
         initColors(shadowColor);
 
-        if(allShadowSize != -1){
+        if (allShadowSize != -1) {
             leftSize = rightSize = bottomSize = topSize = allShadowSize;
         }
 
@@ -131,10 +138,23 @@ public class LCardView extends FrameLayout {
             leftTopCornerRadius = leftBottomCornerRadius = rightTopCornerRadius = rightBottomCornerRadius = cornerRadius;
         }
 
-        super.setPadding(leftSize,
-                topSize,
-                rightSize,
-                bottomSize);
+        if (xOffset > rightSize) {
+            xOffset = rightSize;
+        }
+        if (xOffset < -leftSize) {
+            xOffset = -leftSize;
+        }
+        if (yOffset > bottomSize) {
+            yOffset = bottomSize;
+        }
+        if (yOffset < -topSize) {
+            yOffset = -topSize;
+        }
+
+        super.setPadding(leftSize + xOffset,
+                topSize + yOffset,
+                rightSize - xOffset,
+                bottomSize - yOffset);
     }
 
     @Override
@@ -213,17 +233,30 @@ public class LCardView extends FrameLayout {
     }
 
     private void measureContentPath() {
-        mContentPath.reset();
+        mShadowPath.reset();
         float startX = leftSize;
         float startY = topSize + leftTopCornerRadius;
+        mShadowPath.moveTo(startX, startY);
+        mShadowPath.arcTo(new RectF(startX, topSize, leftTopCornerRadius * 2 + startX, topSize + leftTopCornerRadius * 2), 180, 90);
+        mShadowPath.lineTo(viewWidth - rightSize - rightTopCornerRadius, topSize);
+        mShadowPath.arcTo(new RectF(viewWidth - rightSize - rightTopCornerRadius * 2, topSize, viewWidth - rightSize, topSize + rightTopCornerRadius * 2), 270, 90);
+        mShadowPath.lineTo(viewWidth - rightSize, viewHeight - bottomSize - rightBottomCornerRadius);
+        mShadowPath.arcTo(new RectF(viewWidth - rightSize - rightBottomCornerRadius * 2, viewHeight - bottomSize - rightBottomCornerRadius * 2, viewWidth - rightSize, viewHeight - bottomSize), 0, 90);
+        mShadowPath.lineTo(leftSize + leftBottomCornerRadius, viewHeight - bottomSize);
+        mShadowPath.arcTo(new RectF(leftSize, viewHeight - bottomSize - leftBottomCornerRadius * 2, leftSize + leftBottomCornerRadius * 2, viewHeight - bottomSize), 90, 90);
+        mShadowPath.close();
+
+        mContentPath.reset();
+        startX = leftSize + xOffset;
+        startY = topSize + leftTopCornerRadius + yOffset;
         mContentPath.moveTo(startX, startY);
-        mContentPath.arcTo(new RectF(startX, topSize, leftTopCornerRadius * 2 + startX, topSize + leftTopCornerRadius * 2), 180, 90);
-        mContentPath.lineTo(viewWidth - rightSize - rightTopCornerRadius, topSize);
-        mContentPath.arcTo(new RectF(viewWidth - rightSize - rightTopCornerRadius * 2, topSize, viewWidth - rightSize, topSize + rightTopCornerRadius * 2), 270, 90);
-        mContentPath.lineTo(viewWidth - rightSize, viewHeight - bottomSize - rightBottomCornerRadius);
-        mContentPath.arcTo(new RectF(viewWidth - rightSize - rightBottomCornerRadius * 2, viewHeight - bottomSize - rightBottomCornerRadius * 2, viewWidth - rightSize, viewHeight - bottomSize), 0, 90);
-        mContentPath.lineTo(leftSize + leftBottomCornerRadius, viewHeight - bottomSize);
-        mContentPath.arcTo(new RectF(leftSize, viewHeight - bottomSize - leftBottomCornerRadius * 2, leftSize + leftBottomCornerRadius * 2, viewHeight - bottomSize), 90, 90);
+        mContentPath.arcTo(new RectF(startX, topSize + yOffset, leftTopCornerRadius * 2 + startX, topSize + leftTopCornerRadius * 2 + yOffset), 180, 90);
+        mContentPath.lineTo(viewWidth - rightSize - rightTopCornerRadius + xOffset, topSize + yOffset);
+        mContentPath.arcTo(new RectF(viewWidth - rightSize - rightTopCornerRadius * 2 + xOffset, topSize + yOffset, viewWidth - rightSize + xOffset, topSize + rightTopCornerRadius * 2 + yOffset), 270, 90);
+        mContentPath.lineTo(viewWidth - rightSize + xOffset, viewHeight - bottomSize - rightBottomCornerRadius + yOffset);
+        mContentPath.arcTo(new RectF(viewWidth - rightSize - rightBottomCornerRadius * 2 + xOffset, viewHeight - bottomSize - rightBottomCornerRadius * 2 + yOffset, viewWidth - rightSize + xOffset, viewHeight - bottomSize + yOffset), 0, 90);
+        mContentPath.lineTo(leftSize + leftBottomCornerRadius + xOffset, viewHeight - bottomSize + yOffset);
+        mContentPath.arcTo(new RectF(leftSize + xOffset, viewHeight - bottomSize - leftBottomCornerRadius * 2 + yOffset, leftSize + leftBottomCornerRadius * 2 + xOffset, viewHeight - bottomSize + yOffset), 90, 90);
         mContentPath.close();
     }
 
@@ -242,7 +275,9 @@ public class LCardView extends FrameLayout {
         measureContentPath();
         bgPaint.setColor(cardBackgroundColor);
         canvas.drawPath(mContentPath, bgPaint);
-
+        bgPaint.setColor(shadowColor);
+        canvas.drawPath(mShadowPath, bgPaint);
+        int radius = Math.max(Math.abs(yOffset) + leftTopCornerRadius, Math.abs(xOffset) + leftTopCornerRadius);
         //左上圆角
         int xRadius = leftSize + leftTopCornerRadius;
         int yRadius = topSize + leftTopCornerRadius;
@@ -263,7 +298,6 @@ public class LCardView extends FrameLayout {
 //        t.draw(canvas);
         paint.setShader(t);
         canvas.drawRect(leftSize + leftTopCornerRadius, 0, viewWidth - rightSize - rightTopCornerRadius, topSize, paint);
-
 
         //右上圆角
         xRadius = rightSize + rightTopCornerRadius;
@@ -326,6 +360,7 @@ public class LCardView extends FrameLayout {
 //        l.draw(canvas);
         paint.setShader(l);
         canvas.drawRect(0, topSize + leftTopCornerRadius, leftSize, viewHeight - bottomSize - leftBottomCornerRadius, paint);
+
     }
 
     @Override
@@ -351,7 +386,10 @@ public class LCardView extends FrameLayout {
         this.leftTopCornerRadius = Math.min(this.leftTopCornerRadius, (viewWidth - leftSize - rightSize) / 2);
         this.leftTopCornerRadius = Math.min(this.leftTopCornerRadius, (viewHeight - topSize - bottomSize) / 2);
         if (adjustEdgeSize()) {
-            super.setPadding(leftSize, topSize, rightSize, bottomSize);
+            super.setPadding(leftSize + xOffset,
+                    topSize + yOffset,
+                    rightSize - xOffset,
+                    bottomSize - yOffset);
         }
         createDrawables();
         invalidate();
@@ -363,7 +401,10 @@ public class LCardView extends FrameLayout {
         this.rightTopCornerRadius = Math.min(this.rightTopCornerRadius, (viewWidth - leftSize - rightSize) / 2);
         this.rightTopCornerRadius = Math.min(this.rightTopCornerRadius, (viewHeight - topSize - bottomSize) / 2);
         if (adjustEdgeSize()) {
-            super.setPadding(leftSize, topSize, rightSize, bottomSize);
+            super.setPadding(leftSize + xOffset,
+                    topSize + yOffset,
+                    rightSize - xOffset,
+                    bottomSize - yOffset);
         }
         createDrawables();
         invalidate();
@@ -374,7 +415,10 @@ public class LCardView extends FrameLayout {
         this.rightBottomCornerRadius = Math.min(this.rightBottomCornerRadius, (viewWidth - leftSize - rightSize) / 2);
         this.rightBottomCornerRadius = Math.min(this.rightBottomCornerRadius, (viewHeight - topSize - bottomSize) / 2);
         if (adjustEdgeSize()) {
-            super.setPadding(leftSize, topSize, rightSize, bottomSize);
+            super.setPadding(leftSize + xOffset,
+                    topSize + yOffset,
+                    rightSize - xOffset,
+                    bottomSize - yOffset);
         }
         createDrawables();
         invalidate();
@@ -385,7 +429,10 @@ public class LCardView extends FrameLayout {
         this.leftBottomCornerRadius = Math.min(this.leftBottomCornerRadius, (viewWidth - leftSize - rightSize) / 2);
         this.leftBottomCornerRadius = Math.min(this.leftBottomCornerRadius, (viewHeight - topSize - bottomSize) / 2);
         if (adjustEdgeSize()) {
-            super.setPadding(leftSize, topSize, rightSize, bottomSize);
+            super.setPadding(leftSize + xOffset,
+                    topSize + yOffset,
+                    rightSize - xOffset,
+                    bottomSize - yOffset);
         }
         createDrawables();
         invalidate();
@@ -402,7 +449,9 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.leftSize = leftShadowSize;
         zeroCorner();
-        super.setPadding(leftSize, getPaddingTop(), getPaddingRight(), getPaddingBottom());
+        super.setPadding(leftSize, topSize + yOffset,
+                rightSize - xOffset,
+                bottomSize - yOffset);
         createDrawables();
         invalidate();
     }
@@ -411,7 +460,7 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.rightSize = rightShadowSize;
         zeroCorner();
-        super.setPadding(getPaddingLeft(), getPaddingTop(), rightSize, getPaddingBottom());
+        super.setPadding(getPaddingLeft(), getPaddingTop(), rightSize - xOffset, getPaddingBottom());
         createDrawables();
         invalidate();
     }
@@ -420,7 +469,7 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.topSize = topShadowSize;
         zeroCorner();
-        super.setPadding(getPaddingLeft(), topSize, getPaddingRight(), getPaddingBottom());
+        super.setPadding(getPaddingLeft(), topSize + yOffset, getPaddingRight(), getPaddingBottom());
         createDrawables();
         invalidate();
     }
@@ -429,7 +478,7 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.bottomSize = bottomShadowSize;
         zeroCorner();
-        super.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), bottomSize);
+        super.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), bottomSize - yOffset);
         createDrawables();
         invalidate();
     }
@@ -447,8 +496,8 @@ public class LCardView extends FrameLayout {
         shadowColor = Color.argb(elevationAffectShadowColor ? (elevation + 10) : shadowAlpha, red, green, blue);
         if (shadowFluidShape == ADSORPTION) {
             colors[0] = shadowColor;
-            colors[1] = Color.argb(Color.alpha(shadowColor) / 5, red, green, blue);
-            colors[2] = Color.argb(Color.alpha(shadowColor) / 10, red, green, blue);
+            colors[1] = Color.argb(Color.alpha(shadowColor) / 4, red, green, blue);
+            colors[2] = Color.argb(Color.alpha(shadowColor) / 8, red, green, blue);
             colors[3] = Color.argb(0, red, green, blue);
         } else {
             colors[0] = shadowColor;
@@ -478,7 +527,10 @@ public class LCardView extends FrameLayout {
             this.elevationAffectShadowSize = elevationAffectShadowSize;
             if (elevationAffectShadowSize) {
                 leftSize = rightSize = bottomSize = topSize = elevation + 12;
-                super.setPadding(leftSize, topSize, rightSize, bottomSize);
+                super.setPadding(leftSize + xOffset,
+                        topSize + yOffset,
+                        rightSize - xOffset,
+                        bottomSize - yOffset);
             }
             createDrawables();
             invalidate();
@@ -493,7 +545,10 @@ public class LCardView extends FrameLayout {
         if (elevationAffectShadowSize) {
             leftSize = rightSize = bottomSize = topSize = elevation + 12;
             judgeEdge();
-            super.setPadding(leftSize, topSize, rightSize, bottomSize);
+            super.setPadding(leftSize + xOffset,
+                    topSize + yOffset,
+                    rightSize - xOffset,
+                    bottomSize - yOffset);
         }
         createDrawables();
         invalidate();
@@ -503,7 +558,10 @@ public class LCardView extends FrameLayout {
         this.cornerRadius = radius;
         leftTopCornerRadius = leftBottomCornerRadius = rightTopCornerRadius = rightBottomCornerRadius = cornerRadius;
         if (adjustEdgeSize()) {
-            super.setPadding(leftSize, topSize, rightSize, bottomSize);
+            super.setPadding(leftSize + xOffset,
+                    topSize + yOffset,
+                    rightSize - xOffset,
+                    bottomSize - yOffset);
         }
         createDrawables();
         invalidate();
@@ -515,7 +573,10 @@ public class LCardView extends FrameLayout {
         } else {
             leftSize = rightSize = bottomSize = topSize = shadowSize;
         }
-        super.setPadding(leftSize, topSize, rightSize, bottomSize);
+        super.setPadding(leftSize + xOffset,
+                topSize + yOffset,
+                rightSize - xOffset,
+                bottomSize - yOffset);
         createDrawables();
         invalidate();
     }
@@ -585,8 +646,48 @@ public class LCardView extends FrameLayout {
         invalidate();
     }
 
-    public void setShadowFluidShape(int shape){
-        if(shape != ADSORPTION && shape != LINEAR){
+    public int getXOffset() {
+        return xOffset;
+    }
+
+    public void setXOffset(int xOffset) {
+        if (xOffset > rightSize) {
+            xOffset = rightSize;
+        }
+        if (xOffset < -leftSize) {
+            xOffset = -leftSize;
+        }
+        this.xOffset = xOffset;
+        super.setPadding(leftSize + xOffset,
+                topSize + yOffset,
+                rightSize - xOffset,
+                bottomSize - yOffset);
+        createDrawables();
+        invalidate();
+    }
+
+    public int getYOffset() {
+        return yOffset;
+    }
+
+    public void setYOffset(int yOffset) {
+        if (yOffset > bottomSize) {
+            yOffset = bottomSize;
+        }
+        if (yOffset < -topSize) {
+            yOffset = -topSize;
+        }
+        this.yOffset = yOffset;
+        super.setPadding(leftSize + xOffset,
+                topSize + yOffset,
+                rightSize - xOffset,
+                bottomSize - yOffset);
+        createDrawables();
+        invalidate();
+    }
+
+    public void setShadowFluidShape(int shape) {
+        if (shape != ADSORPTION && shape != LINEAR) {
             return;
         }
         this.shadowFluidShape = shape;

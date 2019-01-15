@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         SeekBar sbZIndex = findViewById(R.id.sbZIndex);
         SeekBar sbShadowSize = findViewById(R.id.sbShadowSize);
         SeekBar sbCorner = findViewById(R.id.sbCorner);
+        SeekBar sbXOffset = findViewById(R.id.sbXOffset);
+        SeekBar sbYOffset = findViewById(R.id.sbYOffset);
         CheckBox cbSize = findViewById(R.id.cbSize);
         CheckBox cbShowPic = findViewById(R.id.cbShowPic);
         final CheckBox cbColor = findViewById(R.id.cbColor);
@@ -45,6 +47,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 cardView.setLeftTopCornerRadius(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        sbXOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardView.setXOffset(progress - 50);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        sbYOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardView.setYOffset(progress - 50);
             }
 
             @Override

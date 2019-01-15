@@ -15,11 +15,12 @@
         <www.linwg.org.lib.LCardView
             android:id="@+id/cardView"
             android:layout_width="280dp"
-            app:cornerRadius="10dp"
-            app:shadowSize="20dp"
-            app:shadowFluidShape="adsorption"
-            app:shadowStartAlpha="4"
-            app:shadowColor="#f00"
+            app:cornerRadius="6dp"
+            app:shadowSize="2dp"
+            app:shadowFluidShape="linear"
+            app:shadowStartAlpha="30"
+            app:shadowColor="#009999"
+            app:yOffset="-4dp"
             android:layout_height="218dp"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp">
@@ -30,15 +31,15 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="我是文本"
+                android:background="#fff"
                 android:textColor="#0aa"
-                android:visibility="gone"
                 android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/ivGirl"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:visibility="gone"
                 android:src="@mipmap/girl" />
 
@@ -145,6 +146,52 @@
 
                 <SeekBar
                     android:id="@+id/sbZIndex"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:min="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="X轴  　偏移量:"
+                    android:textColor="#333"
+                    android:textSize="10sp" />
+
+                <SeekBar
+                    android:id="@+id/sbXOffset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:min="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="Y轴  　偏移量:"
+                    android:textColor="#333"
+                    android:textSize="10sp" />
+
+                <SeekBar
+                    android:id="@+id/sbYOffset"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="100"
