@@ -13,6 +13,7 @@ import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Shader;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,6 +45,7 @@ public class LCardView extends FrameLayout {
     private int viewWidth;
     private int viewHeight;
     private Path mPath = new Path();
+    private Path highVerPath = new Path();
     private Path mContentPath = new Path();
     private Path mShadowPath = new Path();
     private Paint paint = new Paint();
@@ -263,9 +265,18 @@ public class LCardView extends FrameLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         int saveCount = canvas.saveLayer(0, 0, getWidth(), getHeight(), null, Canvas.ALL_SAVE_FLAG);
-        pathPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
-        super.dispatchDraw(canvas);
-        canvas.drawPath(mContentPath, pathPaint);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            pathPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+            super.dispatchDraw(canvas);
+            canvas.drawPath(mContentPath, pathPaint);
+        } else {
+            pathPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+            super.dispatchDraw(canvas);
+            highVerPath.reset();
+            highVerPath.addRect(0, 0, getWidth(), getHeight(), Path.Direction.CW);
+            highVerPath.op(mContentPath, Path.Op.DIFFERENCE);
+            canvas.drawPath(highVerPath, pathPaint);
+        }
         canvas.restoreToCount(saveCount);
         pathPaint.setXfermode(null);
     }

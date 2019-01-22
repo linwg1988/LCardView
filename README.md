@@ -5,7 +5,7 @@ gradle中的引用：
 ~~~
 gradle:
 dependencies {
-    implementation 'org.linwg1988:lcardview:1.4'
+    implementation 'org.linwg1988:lcardview:1.4.1'
 }
 ~~~
 
@@ -16,6 +16,8 @@ dependencies {
 **1.2.版本说明此版本新增了一些xml初始化属性，让布局在xml中更加直观。**</br>
 
 **1.4.版本说明:增加了X轴和Y轴偏移量属性,暂时只允许偏移至边缘位置。**</br>
+
+**1.4.1修复Android P圆角失效的问题**</br>
 
 **控件存在的局限性：四边阴影大小不一的时候无法设置圆角；同理设置圆角大小**</br>
 
