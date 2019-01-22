@@ -15,8 +15,8 @@
         <www.linwg.org.lib.LCardView
             android:id="@+id/cardView"
             android:layout_width="280dp"
-            app:cornerRadius="6dp"
-            app:shadowSize="2dp"
+            app:cornerRadius="26dp"
+            app:shadowSize="20dp"
             app:shadowFluidShape="linear"
             app:shadowStartAlpha="30"
             app:shadowColor="#009999"
@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:src="@mipmap/girl" />
 
         </www.linwg.org.lib.LCardView>

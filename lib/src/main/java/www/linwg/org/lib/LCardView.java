@@ -288,7 +288,7 @@ public class LCardView extends FrameLayout {
         canvas.drawPath(mContentPath, bgPaint);
         bgPaint.setColor(shadowColor);
         canvas.drawPath(mShadowPath, bgPaint);
-        int radius = Math.max(Math.abs(yOffset) + leftTopCornerRadius, Math.abs(xOffset) + leftTopCornerRadius);
+
         //左上圆角
         int xRadius = leftSize + leftTopCornerRadius;
         int yRadius = topSize + leftTopCornerRadius;
@@ -460,6 +460,9 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.leftSize = leftShadowSize;
         zeroCorner();
+        if (xOffset < -leftSize) {
+            xOffset = -leftSize;
+        }
         super.setPadding(leftSize, topSize + yOffset,
                 rightSize - xOffset,
                 bottomSize - yOffset);
@@ -471,6 +474,9 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.rightSize = rightShadowSize;
         zeroCorner();
+        if (xOffset > rightSize) {
+            xOffset = rightSize;
+        }
         super.setPadding(getPaddingLeft(), getPaddingTop(), rightSize - xOffset, getPaddingBottom());
         createDrawables();
         invalidate();
@@ -480,6 +486,9 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.topSize = topShadowSize;
         zeroCorner();
+        if (yOffset < -topSize) {
+            yOffset = -topSize;
+        }
         super.setPadding(getPaddingLeft(), topSize + yOffset, getPaddingRight(), getPaddingBottom());
         createDrawables();
         invalidate();
@@ -489,6 +498,9 @@ public class LCardView extends FrameLayout {
         elevationAffectShadowSize = false;
         this.bottomSize = bottomShadowSize;
         zeroCorner();
+        if (yOffset > bottomSize) {
+            yOffset = bottomSize;
+        }
         super.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), bottomSize - yOffset);
         createDrawables();
         invalidate();
@@ -583,6 +595,18 @@ public class LCardView extends FrameLayout {
             leftSize = rightSize = bottomSize = topSize = elevation + 12;
         } else {
             leftSize = rightSize = bottomSize = topSize = shadowSize;
+        }
+        if (xOffset > rightSize) {
+            xOffset = rightSize;
+        }
+        if (xOffset < -leftSize) {
+            xOffset = -leftSize;
+        }
+        if (yOffset > bottomSize) {
+            yOffset = bottomSize;
+        }
+        if (yOffset < -topSize) {
+            yOffset = -topSize;
         }
         super.setPadding(leftSize + xOffset,
                 topSize + yOffset,
