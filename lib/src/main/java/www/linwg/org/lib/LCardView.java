@@ -49,7 +49,10 @@ public class LCardView extends FrameLayout {
     private Path mContentPath = new Path();
     private Path mShadowPath = new Path();
     private Paint paint = new Paint();
+    private Paint bgColorPaint = new Paint();
     private Paint bgPaint = new Paint();
+    private Paint linePaint = new Paint();
+    private Paint erasePaint = new Paint();
     private Paint pathPaint = new Paint();
     RadialGradient ltrg;
     RadialGradient rtrg;
@@ -123,6 +126,18 @@ public class LCardView extends FrameLayout {
         paint.setAntiAlias(true);
         paint.setDither(true);
         bgPaint.setAntiAlias(true);
+        bgPaint.setDither(true);
+        bgColorPaint.setAntiAlias(true);
+        bgColorPaint.setDither(true);
+        linePaint.setAntiAlias(true);
+        linePaint.setDither(true);
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setStrokeWidth(1);
+        erasePaint.setStrokeWidth(1);
+        erasePaint.setStyle(Paint.Style.STROKE);
+        erasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+
+        pathPaint.setDither(true);
         pathPaint.setAntiAlias(true);
         pathPaint.setColor(Color.WHITE);
 
@@ -264,6 +279,7 @@ public class LCardView extends FrameLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        canvas.save();
         int saveCount = canvas.saveLayer(0, 0, getWidth(), getHeight(), null, Canvas.ALL_SAVE_FLAG);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
             pathPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
@@ -277,17 +293,18 @@ public class LCardView extends FrameLayout {
             highVerPath.op(mContentPath, Path.Op.DIFFERENCE);
             canvas.drawPath(highVerPath, pathPaint);
         }
-        canvas.restoreToCount(saveCount);
+//        canvas.restoreToCount(saveCount);
+        canvas.restore();
         pathPaint.setXfermode(null);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         measureContentPath();
-        bgPaint.setColor(cardBackgroundColor);
-        canvas.drawPath(mContentPath, bgPaint);
         bgPaint.setColor(shadowColor);
         canvas.drawPath(mShadowPath, bgPaint);
+        bgColorPaint.setColor(cardBackgroundColor);
+        canvas.drawPath(mContentPath, bgColorPaint);
 
         //左上圆角
         int xRadius = leftSize + leftTopCornerRadius;

@@ -42,7 +42,7 @@ publish {
     userOrg = 'linwg1988'
     groupId = 'org.linwg1988'
     artifactId = 'lcardview'
-    publishVersion = '1.4.1'
+    publishVersion = '1.4.2'
     desc = 'A libary user for custom a card view.'
     website = 'https://github.com/linwg1988/LCardView'
 }

@@ -18,8 +18,9 @@
             app:cornerRadius="26dp"
             app:shadowSize="20dp"
             app:shadowFluidShape="linear"
-            app:shadowStartAlpha="30"
+            app:shadowStartAlpha="120"
             app:shadowColor="#009999"
+            app:cardBackgroundColor="@color/colorPrimaryDark"
             app:yOffset="-4dp"
             android:layout_height="218dp"
             android:layout_gravity="center_vertical"
@@ -33,6 +34,7 @@
                 android:text="我是文本"
                 android:background="#fff"
                 android:textColor="#0aa"
+                android:visibility="visible"
                 android:textSize="15sp" />
 
             <ImageView
