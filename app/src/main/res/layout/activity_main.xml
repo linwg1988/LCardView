@@ -15,26 +15,28 @@
         <www.linwg.org.lib.LCardView
             android:id="@+id/cardView"
             android:layout_width="280dp"
-            app:cornerRadius="26dp"
-            app:shadowSize="20dp"
-            app:shadowFluidShape="linear"
-            app:shadowStartAlpha="120"
-            app:shadowColor="#009999"
-            app:cardBackgroundColor="@color/colorPrimaryDark"
-            app:yOffset="-4dp"
             android:layout_height="218dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="10dp">
+            android:layout_marginRight="10dp"
+            app:cardBackgroundColor="#ffffff"
+            app:leftOffset="15dp"
+            app:topOffset="10dp"
+            app:bottomOffset="-20dp"
+            app:rightOffset="-5dp"
+            app:shadowSize="20dp"
+            app:shadowColor="#009999"
+            app:shadowFluidShape="linear"
+            app:shadowStartAlpha="150">
 
             <TextView
                 android:id="@+id/tvText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="#fff"
                 android:gravity="center"
                 android:text="我是文本"
-                android:background="#fff"
                 android:textColor="#0aa"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:textSize="15sp" />
 
             <ImageView
@@ -42,8 +44,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:visibility="visible"
-                android:src="@mipmap/girl" />
+                android:src="@mipmap/girl"
+                android:visibility="invisible" />
 
         </www.linwg.org.lib.LCardView>
 
@@ -55,6 +57,21 @@
             android:layout_gravity="right"
             android:text="图片" />
     </FrameLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="280dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="10dp"
+        android:layout_height="218dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/girl"
+            android:visibility="visible" />
+    </android.support.v7.widget.CardView>
 
     <View
         android:layout_width="match_parent"
@@ -70,9 +87,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="45dp"
             android:paddingLeft="15dp"
-            android:paddingRight="15dp">
+            android:paddingRight="15dp"
+            android:paddingBottom="45dp">
 
             <LinearLayout
                 android:layout_width="match_parent"

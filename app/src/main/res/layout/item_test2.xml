@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<www.linwg.org.lib.LCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:shadowFluidShape="adsorption"
-    android:paddingTop="10dp"
-    app:cornerRadius="30dp"
-    app:shadowColor="#000"
-    app:shadowStartAlpha="100"
-    app:cardBackgroundColor="#f00">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="#ffffff"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="6dp"
+    app:cardUseCompatPadding="true"
+    app:strokeColor="#f00"
+    app:strokeWidth="2dp"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +19,6 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher"
             android:layout_height="100dp" />
 
         <TextView
@@ -31,5 +29,4 @@
             android:gravity="center" />
     </LinearLayout>
 
-
-</www.linwg.org.lib.LCardView>
+</android.support.v7.widget.CardView>

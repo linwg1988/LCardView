@@ -31,9 +31,19 @@ public class TestActivity extends AppCompatActivity {
         }
 
         @Override
+        public int getItemViewType(int position) {
+            return 0;
+        }
+
+        @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.item_test, parent, false);
-            return new VH(view);
+            if(viewType == 0){
+                View view = LayoutInflater.from(context).inflate(R.layout.item_test, parent, false);
+                return new VH(view);
+            }else{
+                View view = LayoutInflater.from(context).inflate(R.layout.item_test2, parent, false);
+                return new VH(view);
+            }
         }
 
         @Override

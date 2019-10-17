@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         sbXOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setXOffset(progress - 50);
             }
 
             @Override
@@ -78,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         sbYOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setYOffset(progress - 50);
             }
 
             @Override

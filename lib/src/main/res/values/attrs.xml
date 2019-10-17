@@ -24,5 +24,9 @@
         <attr name="elevationAffectShadowSize" format="boolean"/>
         <attr name="xOffset" format="dimension"/>
         <attr name="yOffset" format="dimension"/>
+        <attr name="leftOffset" format="dimension"/>
+        <attr name="rightOffset" format="dimension"/>
+        <attr name="topOffset" format="dimension"/>
+        <attr name="bottomOffset" format="dimension"/>
     </declare-styleable>
 </resources>
