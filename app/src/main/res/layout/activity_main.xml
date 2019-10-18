@@ -7,26 +7,26 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <www.linwg.org.lib.LCardView
             android:id="@+id/cardView"
-            android:layout_width="280dp"
-            android:layout_height="218dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="10dp"
-            app:cardBackgroundColor="#ffffff"
-            app:leftOffset="15dp"
-            app:topOffset="10dp"
-            app:bottomOffset="-20dp"
-            app:rightOffset="-5dp"
-            app:shadowSize="20dp"
-            app:shadowColor="#009999"
+            app:cardBackgroundColor="#ff0000"
+            app:cornerRadius="10dp"
+            app:leftOffset="-10dp"
+            app:topOffset="-0dp"
+            app:rightOffset="0dp"
+            app:bottomOffset="-0dp"
+            app:shadowColor="#00ff00"
             app:shadowFluidShape="linear"
-            app:shadowStartAlpha="150">
+            app:shadowSize="20dp"
+            app:shadowStartAlpha="250">
 
             <TextView
                 android:id="@+id/tvText"
@@ -36,16 +36,16 @@
                 android:gravity="center"
                 android:text="我是文本"
                 android:textColor="#0aa"
-                android:visibility="gone"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/ivGirl"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="348dp"
+                android:layout_height="261dp"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/girl"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
         </www.linwg.org.lib.LCardView>
 
@@ -54,24 +54,8 @@
             android:id="@+id/cbShowPic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
             android:text="图片" />
-    </FrameLayout>
-
-    <android.support.v7.widget.CardView
-        android:layout_width="280dp"
-        android:layout_margin="10dp"
-        app:cardCornerRadius="10dp"
-        app:cardUseCompatPadding="true"
-        app:cardElevation="10dp"
-        android:layout_height="218dp">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/girl"
-            android:visibility="visible" />
-    </android.support.v7.widget.CardView>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

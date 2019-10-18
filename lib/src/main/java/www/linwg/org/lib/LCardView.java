@@ -31,6 +31,7 @@ public class LCardView extends FrameLayout {
     private int elevation = 0;
     private int shadowSize = defaultShadowSize;
     private int leftOffset, topOffset, rightOffset, bottomOffset;
+    private int effectLeftOffset, effectTopOffset, effectRightOffset, effectBottomOffset;
     private int defaultShadowColor = Color.parseColor("#05000000");
     private int defaultCardBackgroundColor = Color.WHITE;
     private int[] colors = new int[]{defaultShadowColor, defaultShadowColor, Color.parseColor("#00000000"), Color.parseColor("#00000000")};
@@ -156,27 +157,63 @@ public class LCardView extends FrameLayout {
         if (cornerRadius != 0) {
             leftTopCornerRadius = leftBottomCornerRadius = rightTopCornerRadius = rightBottomCornerRadius = cornerRadius;
         }
-        if (leftOffset > shadowSize) {
-            leftOffset = shadowSize;
-        }
-        if (topOffset > shadowSize) {
-            topOffset = shadowSize;
-        }
-        if (rightOffset > shadowSize) {
-            rightOffset = shadowSize;
-        }
-        if (bottomOffset > shadowSize) {
-            bottomOffset = shadowSize;
-        }
-        super.setPadding(shadowSize, shadowSize, shadowSize, shadowSize);
+        int maxOffset = shadowSize / 2;
+        leftOffset = Math.min(maxOffset, leftOffset);
+        topOffset = Math.min(maxOffset, topOffset);
+        rightOffset = Math.min(maxOffset, rightOffset);
+        bottomOffset = Math.min(maxOffset, bottomOffset);
+        effectLeftOffset = leftOffset > 0 ? 0 : leftOffset;
+        effectTopOffset = topOffset > 0 ? 0 : topOffset;
+        effectRightOffset = rightOffset > 0 ? 0 : rightOffset;
+        effectBottomOffset = bottomOffset > 0 ? 0 : bottomOffset;
+
+        int leftPadding = shadowSize + leftOffset;
+        leftPadding = Math.max(leftPadding, 0);
+
+        int topPadding = shadowSize + topOffset;
+        topPadding = Math.max(topPadding, 0);
+
+        int rightPadding = shadowSize + rightOffset;
+        rightPadding = Math.max(rightPadding, 0);
+
+        int bottomPadding = shadowSize + bottomOffset;
+        bottomPadding = Math.max(bottomPadding, 0);
+        super.setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode;
+        switch (widthMode) {
+            case -2147483648:
+            case 1073741824:
+                heightMode = (int) Math.ceil((double) getMinWidth());
+                widthMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(heightMode, MeasureSpec.getSize(widthMeasureSpec)), widthMode);
+            case 0:
+            default:
+                heightMode = MeasureSpec.getMode(heightMeasureSpec);
+                switch (heightMode) {
+                    case -2147483648:
+                    case 1073741824:
+                        int minHeight = (int) Math.ceil((double) getMinHeight());
+                        heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(minHeight, MeasureSpec.getSize(heightMeasureSpec)), heightMode);
+                    case 0:
+                    default:
+                        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                }
+        }
         viewWidth = getMeasuredWidth();
         viewHeight = getMeasuredHeight();
         createDrawables();
+    }
+
+    private int getMinHeight() {
+        return Math.max(leftTopCornerRadius, rightTopCornerRadius) + Math.max(leftBottomCornerRadius, rightBottomCornerRadius);
+    }
+
+    private int getMinWidth() {
+        return Math.max(leftTopCornerRadius, leftBottomCornerRadius) + Math.max(rightTopCornerRadius, rightBottomCornerRadius);
     }
 
     /**
@@ -201,23 +238,11 @@ public class LCardView extends FrameLayout {
         }
     }
 
-    private void judgeEdge() {
-        if (shadowSize > viewWidth / 4) {
-            shadowSize = viewWidth / 4;
-        }
-        if (shadowSize > viewWidth / 4) {
-            shadowSize = viewWidth / 4;
-        }
-        if (shadowSize > viewHeight / 4) {
-            shadowSize = viewHeight / 4;
-        }
-        if (shadowSize > viewHeight / 4) {
-            shadowSize = viewHeight / 4;
-        }
-    }
-
     private void createDrawables() {
-//        judgeOffset();
+        if (shadowSize > viewHeight / 4) {
+            shadowSize = viewHeight / 4;
+        }
+        judgeOffset();
 
         int min = shadowSize + leftTopCornerRadius;
         if (min == 0) {
@@ -226,7 +251,7 @@ public class LCardView extends FrameLayout {
             float start = leftTopCornerRadius / (float) min;
             float center = (1 - start) * percent + start;
             float center2 = (1 - center) / 2 + center;
-            ltrg = new RadialGradient(shadowSize + leftTopCornerRadius + leftOffset, shadowSize + leftTopCornerRadius + topOffset, min, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
+            ltrg = new RadialGradient(shadowSize + leftTopCornerRadius - effectLeftOffset, shadowSize + leftTopCornerRadius - effectTopOffset, min, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
         }
 
         int min2 = shadowSize + rightTopCornerRadius;
@@ -236,7 +261,7 @@ public class LCardView extends FrameLayout {
             float start = rightTopCornerRadius / (float) min2;
             float center = (1 - start) * percent + start;
             float center2 = (1 - center) / 2 + center;
-            rtrg = new RadialGradient(viewWidth - shadowSize - rightTopCornerRadius + rightOffset, shadowSize + rightTopCornerRadius + topOffset, min2, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
+            rtrg = new RadialGradient(viewWidth - shadowSize - rightTopCornerRadius + effectRightOffset, shadowSize + rightTopCornerRadius - effectTopOffset, min2, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
         }
 
         int min3 = shadowSize + rightBottomCornerRadius;
@@ -246,7 +271,7 @@ public class LCardView extends FrameLayout {
             float start = rightBottomCornerRadius / (float) min3;
             float center = (1 - start) * percent + start;
             float center2 = (1 - center) / 2 + center;
-            rbrg = new RadialGradient(viewWidth - shadowSize - rightBottomCornerRadius + rightOffset, viewHeight - shadowSize - rightBottomCornerRadius + bottomOffset, min3, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
+            rbrg = new RadialGradient(viewWidth - shadowSize - rightBottomCornerRadius + effectRightOffset, viewHeight - shadowSize - rightBottomCornerRadius + effectBottomOffset, min3, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
         }
 
         int min4 = shadowSize + leftBottomCornerRadius;
@@ -256,43 +281,45 @@ public class LCardView extends FrameLayout {
             float start = leftBottomCornerRadius / (float) min4;
             float center = (1 - start) * percent + start;
             float center2 = (1 - center) / 2 + center;
-            lbrg = new RadialGradient(shadowSize + leftBottomCornerRadius + leftOffset, viewHeight - shadowSize - leftBottomCornerRadius + bottomOffset, min4, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
+            lbrg = new RadialGradient(shadowSize + leftBottomCornerRadius - effectLeftOffset, viewHeight - shadowSize - leftBottomCornerRadius + effectBottomOffset, min4, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
         }
 
-        t = new LinearGradient(shadowSize + leftTopCornerRadius, shadowSize + topOffset, shadowSize + leftTopCornerRadius, +topOffset, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
+        t = new LinearGradient(shadowSize + leftTopCornerRadius, shadowSize - effectTopOffset, shadowSize + leftTopCornerRadius, -effectTopOffset, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
 
-        r = new LinearGradient(viewWidth - shadowSize + rightOffset, shadowSize + rightTopCornerRadius, viewWidth + rightOffset, shadowSize + rightTopCornerRadius, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
+        r = new LinearGradient(viewWidth - shadowSize + effectRightOffset, shadowSize + rightTopCornerRadius, viewWidth + effectRightOffset, shadowSize + rightTopCornerRadius, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
 
-        b = new LinearGradient(shadowSize + leftBottomCornerRadius, viewHeight - shadowSize + bottomOffset, shadowSize + leftBottomCornerRadius, viewHeight + bottomOffset, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
+        b = new LinearGradient(shadowSize + leftBottomCornerRadius, viewHeight - shadowSize + effectBottomOffset, shadowSize + leftBottomCornerRadius, viewHeight + effectBottomOffset, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
 
-        l = new LinearGradient(shadowSize + leftOffset, shadowSize + leftTopCornerRadius, leftOffset, shadowSize + leftTopCornerRadius, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
+        l = new LinearGradient(shadowSize - effectLeftOffset, shadowSize + leftTopCornerRadius, -effectLeftOffset, shadowSize + leftTopCornerRadius, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
     }
 
     private void measureContentPath() {
         mShadowPath.reset();
-        float startX = shadowSize + leftOffset;
-        float startY = shadowSize + leftTopCornerRadius + topOffset;
+        float startX = shadowSize - effectLeftOffset;
+        float startY = shadowSize + leftTopCornerRadius - effectTopOffset;
         mShadowPath.moveTo(startX, startY);
-        mShadowPath.arcTo(new RectF(startX, shadowSize + topOffset, leftTopCornerRadius * 2 + startX, shadowSize + leftTopCornerRadius * 2 + topOffset), 180, 90);
-        mShadowPath.lineTo(viewWidth - shadowSize - rightTopCornerRadius + rightOffset, shadowSize + topOffset);
-        mShadowPath.arcTo(new RectF(viewWidth - shadowSize - rightTopCornerRadius * 2 + rightOffset, shadowSize + topOffset, viewWidth - shadowSize + rightOffset, shadowSize + rightTopCornerRadius * 2 + topOffset), 270, 90);
-        mShadowPath.lineTo(viewWidth - shadowSize + rightOffset, viewHeight - shadowSize - rightBottomCornerRadius + bottomOffset);
-        mShadowPath.arcTo(new RectF(viewWidth - shadowSize - rightBottomCornerRadius * 2 + rightOffset, viewHeight - shadowSize - rightBottomCornerRadius * 2 + bottomOffset, viewWidth - shadowSize + rightOffset, viewHeight - shadowSize + bottomOffset), 0, 90);
-        mShadowPath.lineTo(shadowSize + leftBottomCornerRadius + leftOffset, viewHeight - shadowSize + bottomOffset);
-        mShadowPath.arcTo(new RectF(shadowSize + leftOffset, viewHeight - shadowSize - leftBottomCornerRadius * 2 + bottomOffset, shadowSize + leftBottomCornerRadius * 2 + leftOffset, viewHeight - shadowSize + bottomOffset), 90, 90);
+        mShadowPath.arcTo(new RectF(startX, shadowSize - effectTopOffset, leftTopCornerRadius * 2 + startX, shadowSize + leftTopCornerRadius * 2 - effectTopOffset), 180, 90);
+        mShadowPath.lineTo(viewWidth - shadowSize - rightTopCornerRadius + effectRightOffset, shadowSize - effectTopOffset);
+        mShadowPath.arcTo(new RectF(viewWidth - shadowSize - rightTopCornerRadius * 2 + effectRightOffset, shadowSize - effectTopOffset, viewWidth - shadowSize + effectRightOffset, shadowSize + rightTopCornerRadius * 2 - effectTopOffset), 270, 90);
+        mShadowPath.lineTo(viewWidth - shadowSize + effectRightOffset, viewHeight - shadowSize - rightBottomCornerRadius + effectBottomOffset);
+        mShadowPath.arcTo(new RectF(viewWidth - shadowSize - rightBottomCornerRadius * 2 + effectRightOffset, viewHeight - shadowSize - rightBottomCornerRadius * 2 + effectBottomOffset, viewWidth - shadowSize + effectRightOffset, viewHeight - shadowSize + effectBottomOffset), 0, 90);
+        mShadowPath.lineTo(shadowSize + leftBottomCornerRadius - effectLeftOffset, viewHeight - shadowSize + effectBottomOffset);
+        mShadowPath.arcTo(new RectF(shadowSize - effectLeftOffset, viewHeight - shadowSize - leftBottomCornerRadius * 2 + effectBottomOffset, shadowSize + leftBottomCornerRadius * 2 - effectLeftOffset, viewHeight - shadowSize + effectBottomOffset), 90, 90);
         mShadowPath.close();
 
         mContentPath.reset();
-        startX = shadowSize;
-        startY = shadowSize + leftTopCornerRadius;
-        mContentPath.moveTo(startX, startY);
-        mContentPath.arcTo(new RectF(startX, shadowSize, leftTopCornerRadius * 2 + startX, shadowSize + leftTopCornerRadius * 2), 180, 90);
-        mContentPath.lineTo(viewWidth - shadowSize - rightTopCornerRadius, shadowSize);
-        mContentPath.arcTo(new RectF(viewWidth - shadowSize - rightTopCornerRadius * 2, shadowSize, viewWidth - shadowSize, shadowSize + rightTopCornerRadius * 2), 270, 90);
-        mContentPath.lineTo(viewWidth - shadowSize, viewHeight - shadowSize - rightBottomCornerRadius);
-        mContentPath.arcTo(new RectF(viewWidth - shadowSize - rightBottomCornerRadius * 2, viewHeight - shadowSize - rightBottomCornerRadius * 2, viewWidth - shadowSize, viewHeight - shadowSize), 0, 90);
-        mContentPath.lineTo(shadowSize + leftBottomCornerRadius, viewHeight - shadowSize);
-        mContentPath.arcTo(new RectF(shadowSize, viewHeight - shadowSize - leftBottomCornerRadius * 2, shadowSize + leftBottomCornerRadius * 2, viewHeight - shadowSize), 90, 90);
+        startX = getPaddingLeft();
+        startY = getPaddingTop();
+        int stopX = getPaddingRight();
+        int stopY = getPaddingBottom();
+        mContentPath.moveTo(startX, startY + leftTopCornerRadius);
+        mContentPath.arcTo(new RectF(startX, startY, leftTopCornerRadius * 2 + startX, startY + leftTopCornerRadius * 2), 180, 90);
+        mContentPath.lineTo(viewWidth - stopX - rightTopCornerRadius, startY);
+        mContentPath.arcTo(new RectF(viewWidth - stopX - rightTopCornerRadius * 2, startY, viewWidth - stopX, startY + rightTopCornerRadius * 2), 270, 90);
+        mContentPath.lineTo(viewWidth - stopX, viewHeight - stopY - rightBottomCornerRadius);
+        mContentPath.arcTo(new RectF(viewWidth - stopX - rightBottomCornerRadius * 2, viewHeight - stopY - rightBottomCornerRadius * 2, viewWidth - stopX, viewHeight - stopY), 0, 90);
+        mContentPath.lineTo(startX + leftBottomCornerRadius, viewHeight - stopY);
+        mContentPath.arcTo(new RectF(startX, viewHeight - stopY - leftBottomCornerRadius * 2, startX + leftBottomCornerRadius * 2, viewHeight - stopY), 90, 90);
         mContentPath.close();
     }
 
@@ -320,85 +347,100 @@ public class LCardView extends FrameLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         measureContentPath();
+        canvas.save();
+        canvas.clipPath(mShadowPath);
+        canvas.clipPath(mContentPath, Region.Op.DIFFERENCE);
         bgPaint.setColor(shadowColor);
         canvas.drawPath(mShadowPath, bgPaint);
+        canvas.restore();
         bgColorPaint.setColor(cardBackgroundColor);
         canvas.drawPath(mContentPath, bgColorPaint);
+
+        canvas.save();
+        canvas.clipPath(mContentPath, Region.Op.DIFFERENCE);
+
+
+        int startX = getPaddingLeft();
+        int startY = getPaddingTop();
+        int stopX = getPaddingRight();
+        int stopY = getPaddingBottom();
 
         //左上圆角
         int radius = shadowSize + leftTopCornerRadius;
         if (radius != 0) {
             canvas.save();
-            canvas.clipRect(leftOffset, topOffset, radius + leftOffset, radius + topOffset);
+            canvas.clipRect(-effectLeftOffset, -effectTopOffset, radius - effectLeftOffset, radius - effectTopOffset);
             mPath.reset();
-            mPath.addCircle(leftOffset + radius, topOffset + radius, leftTopCornerRadius, Path.Direction.CCW);
+            mPath.addCircle(-effectLeftOffset + radius, -effectTopOffset + radius, leftTopCornerRadius, Path.Direction.CCW);
             canvas.clipPath(mPath, Region.Op.DIFFERENCE);
             paint.setShader(ltrg);
-            canvas.drawCircle(radius + leftOffset, radius + topOffset, radius, paint);
+            canvas.drawCircle(radius - effectLeftOffset, radius - effectTopOffset, radius, paint);
             canvas.restore();
         }
 
         //顶部阴影
         canvas.save();
         paint.setShader(t);
-        canvas.drawRect(radius + leftOffset, topOffset, viewWidth - shadowSize - rightTopCornerRadius + rightOffset, shadowSize + topOffset, paint);
+        canvas.drawRect(radius - effectLeftOffset, -effectTopOffset, viewWidth - shadowSize - rightTopCornerRadius + effectRightOffset, shadowSize - effectTopOffset, paint);
         canvas.restore();
 
         //右上圆角
         radius = shadowSize + rightTopCornerRadius;
         if (radius != 0) {
             canvas.save();
-            canvas.clipRect(viewWidth - radius + rightOffset, topOffset, viewWidth + rightOffset, radius + topOffset);
+            canvas.clipRect(viewWidth - radius + effectRightOffset, -effectTopOffset, viewWidth + effectRightOffset, radius - effectTopOffset);
             mPath.reset();
-            mPath.addCircle(viewWidth - radius + rightOffset, radius + topOffset, rightTopCornerRadius, Path.Direction.CCW);
+            mPath.addCircle(viewWidth - radius + effectRightOffset, radius - effectTopOffset, rightTopCornerRadius, Path.Direction.CCW);
             canvas.clipPath(mPath, Region.Op.DIFFERENCE);
             paint.setShader(rtrg);
-            canvas.drawCircle(viewWidth - radius + rightOffset, radius + topOffset, radius, paint);
+            canvas.drawCircle(viewWidth - radius + effectRightOffset, radius - effectTopOffset, radius, paint);
             canvas.restore();
         }
 
         //右侧阴影
         canvas.save();
         paint.setShader(r);
-        canvas.drawRect(viewWidth - shadowSize + rightOffset, shadowSize + rightTopCornerRadius + topOffset, viewWidth + rightOffset, viewHeight - shadowSize - rightBottomCornerRadius + bottomOffset, paint);
+        canvas.drawRect(viewWidth - shadowSize + effectRightOffset, shadowSize + rightTopCornerRadius - effectTopOffset, viewWidth + effectRightOffset, viewHeight - shadowSize - rightBottomCornerRadius + effectBottomOffset, paint);
         canvas.restore();
 
         //右下圆角阴影
         radius = shadowSize + rightBottomCornerRadius;
         if (radius != 0) {
             canvas.save();
-            canvas.clipRect(viewWidth - radius + rightOffset, viewHeight - radius + bottomOffset, viewWidth + rightOffset, viewHeight + bottomOffset);
+            canvas.clipRect(viewWidth - radius + effectRightOffset, viewHeight - radius + effectBottomOffset, viewWidth + effectRightOffset, viewHeight + effectBottomOffset);
             mPath.reset();
-            mPath.addCircle(viewWidth - radius + rightOffset, viewHeight - radius + bottomOffset, rightBottomCornerRadius, Path.Direction.CCW);
+            mPath.addCircle(viewWidth - radius + effectRightOffset, viewHeight - radius + effectBottomOffset, rightBottomCornerRadius, Path.Direction.CCW);
             canvas.clipPath(mPath, Region.Op.DIFFERENCE);
             paint.setShader(rbrg);
-            canvas.drawCircle(viewWidth - radius + rightOffset, viewHeight - radius + bottomOffset, radius, paint);
+            canvas.drawCircle(viewWidth - radius + effectRightOffset, viewHeight - radius + effectBottomOffset, radius, paint);
             canvas.restore();
         }
 
         //底部阴影
         canvas.save();
         paint.setShader(b);
-        canvas.drawRect(shadowSize + leftBottomCornerRadius + leftOffset, viewHeight - shadowSize + bottomOffset, viewWidth - shadowSize - rightBottomCornerRadius + rightOffset, viewHeight + bottomOffset, paint);
+        canvas.drawRect(shadowSize + leftBottomCornerRadius - effectLeftOffset, viewHeight - shadowSize + effectBottomOffset, viewWidth - shadowSize - rightBottomCornerRadius + effectRightOffset, viewHeight + effectBottomOffset, paint);
         canvas.restore();
 
         //左下圆角阴影
         radius = shadowSize + leftBottomCornerRadius;
         if (radius != 0) {
             canvas.save();
-            canvas.clipRect(leftOffset, viewHeight - radius + bottomOffset, radius + leftOffset, viewHeight + bottomOffset);
+            canvas.clipRect(-effectLeftOffset, viewHeight - radius + effectBottomOffset, radius - effectLeftOffset, viewHeight + effectBottomOffset);
             mPath.reset();
-            mPath.addCircle(radius + leftOffset, viewHeight - radius + bottomOffset, leftBottomCornerRadius, Path.Direction.CCW);
+            mPath.addCircle(radius - effectLeftOffset, viewHeight - radius + effectBottomOffset, leftBottomCornerRadius, Path.Direction.CCW);
             canvas.clipPath(mPath, Region.Op.DIFFERENCE);
             paint.setShader(lbrg);
-            canvas.drawCircle(radius + leftOffset, viewHeight - radius + bottomOffset, radius, paint);
+            canvas.drawCircle(radius - effectLeftOffset, viewHeight - radius + effectBottomOffset, radius, paint);
             canvas.restore();
         }
 
         //左侧阴影
         canvas.save();
         paint.setShader(l);
-        canvas.drawRect(leftOffset, shadowSize + leftTopCornerRadius + topOffset, shadowSize + leftOffset, viewHeight - shadowSize - leftBottomCornerRadius + bottomOffset, paint);
+        canvas.drawRect(-effectLeftOffset, shadowSize + leftTopCornerRadius - effectTopOffset, shadowSize - effectLeftOffset, viewHeight - shadowSize - leftBottomCornerRadius + effectBottomOffset, paint);
+        canvas.restore();
+
         canvas.restore();
     }
 
