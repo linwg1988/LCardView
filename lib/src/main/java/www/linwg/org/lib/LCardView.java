@@ -251,7 +251,10 @@ public class LCardView extends FrameLayout {
             float start = leftTopCornerRadius / (float) min;
             float center = (1 - start) * percent + start;
             float center2 = (1 - center) / 2 + center;
-            ltrg = new RadialGradient(shadowSize + leftTopCornerRadius - effectLeftOffset, shadowSize + leftTopCornerRadius - effectTopOffset, min, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
+            float centerX = getPaddingLeft() > 0 ? shadowSize + leftTopCornerRadius : shadowSize + leftTopCornerRadius - effectLeftOffset;
+            float centerY = getPaddingTop() > 0 ? shadowSize + leftTopCornerRadius : shadowSize + leftTopCornerRadius - effectTopOffset;
+//            ltrg = new RadialGradient(shadowSize + leftTopCornerRadius - effectLeftOffset, shadowSize + leftTopCornerRadius - effectTopOffset + getPaddingTop(), min, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
+            ltrg = new RadialGradient(centerX, centerY, min, colors, new float[]{start, center, center2, 1}, Shader.TileMode.CLAMP);
         }
 
         int min2 = shadowSize + rightTopCornerRadius;
@@ -290,7 +293,10 @@ public class LCardView extends FrameLayout {
 
         b = new LinearGradient(shadowSize + leftBottomCornerRadius, viewHeight - shadowSize + effectBottomOffset, shadowSize + leftBottomCornerRadius, viewHeight + effectBottomOffset, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
 
-        l = new LinearGradient(shadowSize - effectLeftOffset, shadowSize + leftTopCornerRadius, -effectLeftOffset, shadowSize + leftTopCornerRadius, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
+        float x0 = getPaddingLeft() > 0 ? shadowSize : effectLeftOffset + shadowSize;
+        float x1 = x0- shadowSize;
+//        l = new LinearGradient(shadowSize - effectLeftOffset, shadowSize + leftTopCornerRadius, -effectLeftOffset, shadowSize + leftTopCornerRadius, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
+        l = new LinearGradient(x0, shadowSize + leftTopCornerRadius, x1, shadowSize + leftTopCornerRadius, colors, new float[]{0, percent, (1 - percent) / 2 + percent, 1}, Shader.TileMode.CLAMP);
     }
 
     private void measureContentPath() {
@@ -346,18 +352,18 @@ public class LCardView extends FrameLayout {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        measureContentPath();
-        canvas.save();
-        canvas.clipPath(mShadowPath);
-        canvas.clipPath(mContentPath, Region.Op.DIFFERENCE);
-        bgPaint.setColor(shadowColor);
-        canvas.drawPath(mShadowPath, bgPaint);
-        canvas.restore();
-        bgColorPaint.setColor(cardBackgroundColor);
-        canvas.drawPath(mContentPath, bgColorPaint);
+//        measureContentPath();
+//        canvas.save();
+//        canvas.clipPath(mShadowPath);
+//        canvas.clipPath(mContentPath, Region.Op.DIFFERENCE);
+//        bgPaint.setColor(shadowColor);
+//        canvas.drawPath(mShadowPath, bgPaint);
+//        canvas.restore();
+//        bgColorPaint.setColor(cardBackgroundColor);
+//        canvas.drawPath(mContentPath, bgColorPaint);
 
-        canvas.save();
-        canvas.clipPath(mContentPath, Region.Op.DIFFERENCE);
+//        canvas.save();
+//        canvas.clipPath(mContentPath, Region.Op.DIFFERENCE);
 
 
         int startX = getPaddingLeft();
@@ -366,6 +372,7 @@ public class LCardView extends FrameLayout {
         int stopY = getPaddingBottom();
 
         //左上圆角
+
         int radius = shadowSize + leftTopCornerRadius;
         if (radius != 0) {
             canvas.save();
@@ -438,10 +445,14 @@ public class LCardView extends FrameLayout {
         //左侧阴影
         canvas.save();
         paint.setShader(l);
-        canvas.drawRect(-effectLeftOffset, shadowSize + leftTopCornerRadius - effectTopOffset, shadowSize - effectLeftOffset, viewHeight - shadowSize - leftBottomCornerRadius + effectBottomOffset, paint);
+        float x0 = getPaddingLeft() > 0 ? shadowSize : effectLeftOffset + shadowSize;
+        float x1 = x0- shadowSize;
+        
+//        canvas.drawRect(-effectLeftOffset, shadowSize + leftTopCornerRadius - effectTopOffset, shadowSize - effectLeftOffset, viewHeight - shadowSize - leftBottomCornerRadius + effectBottomOffset, paint);
+        canvas.drawRect(x1, shadowSize + leftTopCornerRadius - effectTopOffset, x0, viewHeight - shadowSize - leftBottomCornerRadius + effectBottomOffset, paint);
         canvas.restore();
 
-        canvas.restore();
+//        canvas.restore();
     }
 
     @Override
