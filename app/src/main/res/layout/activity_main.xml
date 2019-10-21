@@ -17,16 +17,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            app:cardBackgroundColor="#ff0000"
-            app:cornerRadius="10dp"
-            app:leftOffset="-10dp"
-            app:topOffset="-0dp"
-            app:rightOffset="0dp"
-            app:bottomOffset="-0dp"
-            app:shadowColor="#00ff00"
-            app:shadowFluidShape="linear"
             app:shadowSize="20dp"
-            app:shadowStartAlpha="250">
+            app:cornerRadius="10dp"
+            app:leftOffset="-8dp"
+            app:rightOffset="-8dp"
+            app:topOffset="-15dp"
+            app:shadowFluidShape="linear"
+            app:shadowColor="#009999"
+            app:shadowStartAlpha="80">
 
             <TextView
                 android:id="@+id/tvText"
@@ -36,8 +34,7 @@
                 android:gravity="center"
                 android:text="我是文本"
                 android:textColor="#0aa"
-                android:textSize="15sp"
-                android:visibility="gone" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/ivGirl"
@@ -47,20 +44,17 @@
                 android:src="@mipmap/girl"
                 android:visibility="visible" />
 
+            <CheckBox
+                android:id="@+id/cbShowPic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="图片" />
+
         </www.linwg.org.lib.LCardView>
 
-
-        <CheckBox
-            android:id="@+id/cbShowPic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="图片" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#eee" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -166,16 +160,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:text="X轴  　偏移量:"
+                    android:text="左半区阴影偏移量:"
                     android:textColor="#333"
                     android:textSize="10sp" />
 
                 <SeekBar
-                    android:id="@+id/sbXOffset"
+                    android:id="@+id/sbLeftOffset"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="100"
-                    android:min="0" />
+                    android:max="50"
+                    android:min="-50"
+                    android:progress="0" />
             </LinearLayout>
 
             <LinearLayout
@@ -189,16 +184,65 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:text="Y轴  　偏移量:"
+                    android:text="右半区阴影偏移量:"
                     android:textColor="#333"
                     android:textSize="10sp" />
 
                 <SeekBar
-                    android:id="@+id/sbYOffset"
+                    android:id="@+id/sbRightOffset"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="100"
-                    android:min="0" />
+                    android:max="50"
+                    android:min="-50"
+                    android:progress="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="上半区阴影偏移量:"
+                    android:textColor="#333"
+                    android:textSize="10sp" />
+
+                <SeekBar
+                    android:id="@+id/sbTopOffset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="50"
+                    android:min="-50"
+                    android:progress="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="下半区阴影偏移量:"
+                    android:textColor="#333"
+                    android:textSize="10sp" />
+
+                <SeekBar
+                    android:id="@+id/sbBottomOffset"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="50"
+                    android:min="-50"
+                    android:progress="0" />
             </LinearLayout>
 
             <LinearLayout
@@ -362,97 +406,6 @@
                     android:min="1" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="左侧阴影宽度:"
-                    android:textColor="#333"
-                    android:textSize="10sp" />
-
-                <SeekBar
-                    android:id="@+id/sbLeftShadowSize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="100"
-                    android:min="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="右侧阴影宽度:"
-                    android:textColor="#333"
-                    android:textSize="10sp" />
-
-                <SeekBar
-                    android:id="@+id/sbRightShadowSize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="100"
-                    android:min="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="顶部阴影高度:"
-                    android:textColor="#333"
-                    android:textSize="10sp" />
-
-                <SeekBar
-                    android:id="@+id/sbTopShadowSize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="100"
-                    android:min="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="底部阴影高度:"
-                    android:textColor="#333"
-                    android:textSize="10sp" />
-
-                <SeekBar
-                    android:id="@+id/sbBottomShadowSize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="100"
-                    android:min="1" />
-            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

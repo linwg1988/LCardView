@@ -26,16 +26,14 @@ public class MainActivity extends AppCompatActivity {
         SeekBar sbRightTop = findViewById(R.id.sbRightTop);
         SeekBar sbRightBottom = findViewById(R.id.sbRightBottom);
         SeekBar sbLeftBottom = findViewById(R.id.sbLeftBottom);
-        SeekBar sbLeftShadowSize = findViewById(R.id.sbLeftShadowSize);
-        SeekBar sbRightShadowSize = findViewById(R.id.sbRightShadowSize);
-        SeekBar sbTopShadowSize = findViewById(R.id.sbTopShadowSize);
-        SeekBar sbBottomShadowSize = findViewById(R.id.sbBottomShadowSize);
         SeekBar sbShadowAlpha = findViewById(R.id.sbShadowAlpha);
         SeekBar sbZIndex = findViewById(R.id.sbZIndex);
         SeekBar sbShadowSize = findViewById(R.id.sbShadowSize);
         SeekBar sbCorner = findViewById(R.id.sbCorner);
-        SeekBar sbXOffset = findViewById(R.id.sbXOffset);
-        SeekBar sbYOffset = findViewById(R.id.sbYOffset);
+        SeekBar sbLeftOffset = findViewById(R.id.sbLeftOffset);
+        SeekBar sbTopOffset = findViewById(R.id.sbTopOffset);
+        SeekBar sbRightOffset = findViewById(R.id.sbRightOffset);
+        SeekBar sbBottomOffset = findViewById(R.id.sbBottomOffset);
         CheckBox cbSize = findViewById(R.id.cbSize);
         CheckBox cbShowPic = findViewById(R.id.cbShowPic);
         final CheckBox cbColor = findViewById(R.id.cbColor);
@@ -59,9 +57,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        sbXOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        sbLeftOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardView.setLeftOffset(progress);
             }
 
             @Override
@@ -74,9 +73,42 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        sbYOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        sbTopOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardView.setTopOffset(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        sbRightOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardView.setRightOffset(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        sbBottomOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardView.setBottomOffset(progress);
             }
 
             @Override
@@ -125,70 +157,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 cardView.setLeftBottomCornerRadius(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        sbLeftShadowSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setLeftShadowSize(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        sbRightShadowSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setRightShadowSize(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        sbTopShadowSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setTopShadowSize(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        sbBottomShadowSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setBottomShadowSize(progress);
             }
 
             @Override
@@ -270,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         cbShowPic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ivGirl.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                ivGirl.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
             }
         });
         sbZIndex.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

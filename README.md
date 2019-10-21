@@ -1,5 +1,5 @@
 # LCardView
-卡片布局，可设置阴影颜色，透明度，圆角大小，阴影宽度。</br>
+卡片布局，可设置阴影颜色，透明度，圆角大小，阴影宽度，阴影偏移量。</br>
 
 gradle中的引用：
 ~~~
@@ -25,14 +25,29 @@ dependencies {
 
 **的时候四边的阴影大小会自动恢复成初始值**</br>
 
+**1.5.0版本说明**</br>
+**此版本已经弃用四边阴影宽度分别设置的方法。**</br>
+**对于阴影偏移的实现进行修改替换，分为上、下、左、右四个区域，**</br>
+**偏移的数值为正，则从卡片中心向外偏移，**</br>
+**偏移的数值为负，则从卡片中心向内偏移，**</br>
+**你可以使用:**</br>
+~~~
+setShadowOffsetCenter(int offset)
+~~~
+**进行以卡片中心的整体偏移，也可以使用:**</br>
+~~~
+setShadowOffset(int offset)
+~~~
+**进行以卡片左上角顶点的整体偏移。**</br>
+
 下面是布局里面可使用的属性：</br>
 
 | xml属性名称 | 中文释义 |
 | --- | --- |
-| attr:leftShadowWidth | 左侧阴影宽度 |
-| attr:topShadowHeight | 顶部阴影宽度 |
-| attr:rightShadowWidth |右侧阴影宽度 |
-| attr:bottomShadowHeight | 底部阴影宽度 |
+| ~~attr:leftShadowWidth~~ | ~~左侧阴影宽度~~ |
+| ~~attr:topShadowHeight~~ | ~~顶部阴影宽度~~ |
+| ~~attr:rightShadowWidth~~ |~~右侧阴影宽度~~ |
+| ~~attr:bottomShadowHeight~~ | ~~底部阴影宽度~~ |
 | **attr:shadowSize** | **四边阴影宽度** |
 | **attr:shadowStartAlpha** | **阴影颜色初始透明度** |
 | **attr:shadowFluidShape** | **阴影流动形状（线性/吸附）** |
@@ -46,8 +61,12 @@ dependencies {
 | attr:elevation | 卡片高度 |
 | attr:elevationAffectShadowColor | 卡片高度是否影响阴影颜色 |
 | attr:elevationAffectShadowSize | 卡片高度是否影响阴影宽度 |
-| attr:xOffset | 卡片X轴偏移量 |
-| attr:yOffset | 卡片Y轴偏移量 |
+| ~~attr:xOffset~~ | ~~卡片X轴偏移量(已弃用)~~ |
+| ~~attr:yOffset~~ | ~~卡片Y轴偏移量(已弃用)~~ |
+| **attr:leftOffset** | **卡片左半区阴影偏移量** |
+| **attr:rightOffset** | **卡片右半区阴影偏移量** |
+| **attr:topOffset** | **卡片上半区阴影偏移量** |
+| **attr:bottomOffset** | **卡片右半区阴影偏移量** |
 
 在Java代码中也有对应相关的属性设置方法。
 
