@@ -5,7 +5,7 @@ gradle中的引用：
 ~~~
 gradle:
 dependencies {
-    implementation 'org.linwg1988:lcardview:1.4.2'
+    implementation 'org.linwg1988:lcardview:1.5.1'
 }
 ~~~
 
@@ -26,10 +26,15 @@ dependencies {
 **的时候四边的阴影大小会自动恢复成初始值**</br>
 
 **1.5.0版本说明**</br>
+
 **此版本已经弃用四边阴影宽度分别设置的方法。**</br>
+
 **对于阴影偏移的实现进行修改替换，分为上、下、左、右四个区域，**</br>
+
 **偏移的数值为正，则从卡片中心向外偏移，**</br>
+
 **偏移的数值为负，则从卡片中心向内偏移，**</br>
+
 **你可以使用:**</br>
 ~~~
 setShadowOffsetCenter(int offset)

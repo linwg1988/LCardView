@@ -33,10 +33,10 @@ public class LCardView extends FrameLayout {
     private int leftOffset, topOffset, rightOffset, bottomOffset;
     private int effectLeftOffset, effectTopOffset, effectRightOffset, effectBottomOffset;
     private int defaultShadowColor = Color.parseColor("#05000000");
-    private int defaultCardBackgroundColor = Color.WHITE;
+    private int defaultCardBackgroundColor = 99999999;
     private int[] colors = new int[]{defaultShadowColor, defaultShadowColor, Color.parseColor("#00000000"), Color.parseColor("#00000000")};
     private int shadowColor = defaultShadowColor;
-    private int cardBackgroundColor = -1;
+    private int cardBackgroundColor = 99999999;
     private int cornerRadius = 0;
     private boolean elevationAffectShadowColor = false;
     private boolean elevationAffectShadowSize = false;
@@ -405,7 +405,7 @@ public class LCardView extends FrameLayout {
         bgPaint.setColor(shadowColor);
         canvas.drawPath(mShadowPath, bgPaint);
         canvas.restore();
-        if(cardBackgroundColor != -1){
+        if(cardBackgroundColor != defaultCardBackgroundColor){
             bgColorPaint.setColor(cardBackgroundColor);
             canvas.drawPath(mContentPath, bgColorPaint);
         }
