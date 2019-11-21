@@ -21,6 +21,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import www.linwg.org.lcardview.R;
 
 public class LCardView extends FrameLayout {
@@ -769,23 +772,11 @@ public class LCardView extends FrameLayout {
         invalidate();
     }
 
+    @Deprecated
     public void setShadowOffset(int offset) {
-        int maxOffset = shadowSize / 2;
-        int leftOffset = Math.min(maxOffset, -offset);
-        int rightOffset = Math.min(maxOffset, -offset);
-        int topOffset = Math.min(maxOffset, offset);
-        int bottomOffset = Math.min(maxOffset, offset);
-        if (this.leftOffset == leftOffset && this.rightOffset == rightOffset && this.topOffset == topOffset && this.bottomOffset == bottomOffset) {
-            return;
-        }
-        this.leftOffset = leftOffset;
-        this.rightOffset = rightOffset;
-        this.topOffset = topOffset;
-        this.bottomOffset = bottomOffset;
-        onShadowSizeChange();
-        createDrawables();
-        invalidate();
+        //No work fine.
     }
+
 
     public int getLeftOffset() {
         return leftOffset;
@@ -883,4 +874,29 @@ public class LCardView extends FrameLayout {
         createDrawables();
         postInvalidate();
     }
+
+    /**
+     * If multi properties is been set by java code,use this class to reduce drawable create times.
+     public PropertyHolder properties() {
+     return new PropertyHolder(this);
+     }
+
+     public static class PropertyHolder {
+     private LCardView cardView;
+     private Map<String, Object> map = new HashMap<>();
+
+     private PropertyHolder(LCardView cardView) {
+     this.cardView = cardView;
+     }
+
+     public PropertyHolder cornerRadius(int cornerRadius) {
+     return this;
+     }
+
+     public void confirm() {
+
+     }
+     }
+     */
+
 }

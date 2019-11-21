@@ -14,17 +14,14 @@
 
         <www.linwg.org.lib.LCardView
             android:id="@+id/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
             android:layout_gravity="center_vertical"
-            app:cornerRadius="10dp"
-            app:leftOffset="-8dp"
-            app:rightOffset="-8dp"
+            app:cornerRadius="20dp"
             app:shadowColor="#009999"
             app:shadowFluidShape="linear"
             app:shadowSize="20dp"
-            app:shadowStartAlpha="80"
-            app:topOffset="-15dp">
+            app:shadowStartAlpha="80">
 
             <TextView
                 android:id="@+id/tvText"
@@ -52,7 +49,6 @@
                 android:text="图片" />
 
 
-
         </www.linwg.org.lib.LCardView>
 
     </LinearLayout>
@@ -73,7 +69,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <EditText
                     android:id="@+id/etColor"
@@ -101,7 +98,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <CheckBox
                     android:id="@+id/cbSize"
@@ -125,7 +123,8 @@
                 android:id="@+id/cbMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="阴影模式(线性)" />
+                android:text="阴影模式(线性)"
+                android:visibility="gone" />
 
 
             <LinearLayout
@@ -133,7 +132,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -179,7 +179,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -231,30 +232,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:text="阴影整体偏移:"
-                    android:textColor="#333"
-                    android:textSize="10sp" />
-
-                <SeekBar
-                    android:id="@+id/sbOffset"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="50"
-                    android:min="-50"
-                    android:progress="0" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
                     android:text="阴影中心偏移:"
                     android:textColor="#333"
                     android:textSize="10sp" />
@@ -264,7 +241,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="50"
-                    android:min="-50"
                     android:progress="0" />
             </LinearLayout>
 
@@ -288,7 +264,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="50"
-                    android:min="-50"
                     android:progress="0" />
             </LinearLayout>
 
@@ -312,7 +287,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="50"
-                    android:min="-50"
                     android:progress="0" />
             </LinearLayout>
 
@@ -336,7 +310,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="50"
-                    android:min="-50"
                     android:progress="0" />
             </LinearLayout>
 
@@ -360,7 +333,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="50"
-                    android:min="-50"
                     android:progress="0" />
             </LinearLayout>
 
@@ -370,7 +342,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -393,7 +366,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -416,7 +390,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -439,7 +414,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"

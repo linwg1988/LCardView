@@ -41,48 +41,37 @@ public class MainActivity extends AppCompatActivity {
         final EditText etColor = findViewById(R.id.etColor);
         final Button btnSure = findViewById(R.id.btnSure);
         final ImageView ivGirl = findViewById(R.id.ivGirl);
-        final SeekBar sbOffset = findViewById(R.id.sbOffset);
         final SeekBar sbCenterOffset = findViewById(R.id.sbCenterOffset);
-        initSeekBar(sbLeftOffset);
-        initSeekBar(sbTopOffset);
-        initSeekBar(sbRightOffset);
-        initSeekBar(sbRightOffset);
-        initSeekBar(sbOffset);
-        initSeekBar(sbCenterOffset);
-        sbOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setShadowOffset(progress - 100);
-            }
-        });
+        final int bottomShadowSize = cardView.getBottomShadowSize();
+
         sbCenterOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setShadowOffsetCenter(progress - 100);
+                cardView.setShadowOffsetCenter(progress - bottomShadowSize / 2);
             }
         });
         sbLeftOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setLeftOffset(progress - 100);
+                cardView.setLeftOffset(progress - bottomShadowSize / 2);
             }
         });
         sbTopOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setTopOffset(progress - 100);
+                cardView.setTopOffset(progress - bottomShadowSize / 2);
             }
         });
         sbRightOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setRightOffset(progress - 100);
+                cardView.setRightOffset(progress - bottomShadowSize / 2);
             }
         });
         sbBottomOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setBottomOffset(progress - 100);
+                cardView.setBottomOffset(progress - bottomShadowSize / 2);
             }
         });
         sbLeftTop.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
@@ -185,11 +174,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        initSeekBar(sbLeftOffset, bottomShadowSize);
+        initSeekBar(sbTopOffset, bottomShadowSize);
+        initSeekBar(sbRightOffset, bottomShadowSize);
+        initSeekBar(sbBottomOffset, bottomShadowSize);
+        initSeekBar(sbCenterOffset, bottomShadowSize);
     }
 
-    private void initSeekBar(SeekBar seekBar) {
-        seekBar.setMax(200);
-        seekBar.setProgress(100);
+    private void initSeekBar(SeekBar seekBar, int max) {
+        seekBar.setMin(0);
+        seekBar.setMax(max);
+        seekBar.setProgress(max / 2);
     }
 
     private static abstract class OnSeekBarChangeAdapter implements SeekBar.OnSeekBarChangeListener {
