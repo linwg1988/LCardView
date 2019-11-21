@@ -12,6 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Random;
+
+import www.linwg.org.lib.LCardView;
+
 public class TestActivity extends AppCompatActivity {
 
     @Override
@@ -48,6 +52,9 @@ public class TestActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(VH holder, int position) {
+            if(holder.itemView instanceof LCardView){
+                ((LCardView) holder.itemView).setShadowAlpha(new Random().nextInt(255));
+            }
             holder.imageView.setImageResource(R.drawable.ic_launcher_background);
             holder.testView.setText(""+holder.getLayoutPosition());
         }

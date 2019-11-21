@@ -18,6 +18,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import www.linwg.org.lcardview.R;
@@ -44,8 +45,8 @@ public class LCardView extends FrameLayout {
     private int rightTopCornerRadius = 0;
     private int rightBottomCornerRadius = 0;
     private int leftBottomCornerRadius = 0;
-    private int viewWidth;
-    private int viewHeight;
+    private int viewWidth = -3;
+    private int viewHeight = -3;
     private Path mPath = new Path();
     private Path highVerPath = new Path();
     private Path mContentPath = new Path();
@@ -212,9 +213,11 @@ public class LCardView extends FrameLayout {
                         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
                 }
         }
-        viewWidth = getMeasuredWidth();
-        viewHeight = getMeasuredHeight();
-        createDrawables();
+        if (viewWidth == -3) {
+            viewWidth = getMeasuredWidth();
+            viewHeight = getMeasuredHeight();
+            createDrawables();
+        }
     }
 
     private int getMinHeight() {
@@ -223,6 +226,16 @@ public class LCardView extends FrameLayout {
 
     private int getMinWidth() {
         return Math.max(leftTopCornerRadius, leftBottomCornerRadius) + Math.max(rightTopCornerRadius, rightBottomCornerRadius);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (w != oldw || h != oldh) {
+            viewWidth = w;
+            viewHeight = h;
+            createDrawables();
+        }
     }
 
     /**
@@ -248,6 +261,10 @@ public class LCardView extends FrameLayout {
     }
 
     private void createDrawables() {
+        if (viewHeight == -3 || viewWidth == -3) {
+            // view is not measure ann not ready to draw
+            return;
+        }
         if (shadowSize > viewHeight / 4) {
             shadowSize = viewHeight / 4;
         }
@@ -405,7 +422,7 @@ public class LCardView extends FrameLayout {
         bgPaint.setColor(shadowColor);
         canvas.drawPath(mShadowPath, bgPaint);
         canvas.restore();
-        if(cardBackgroundColor != defaultCardBackgroundColor){
+        if (cardBackgroundColor != defaultCardBackgroundColor) {
             bgColorPaint.setColor(cardBackgroundColor);
             canvas.drawPath(mContentPath, bgColorPaint);
         }
@@ -472,6 +489,9 @@ public class LCardView extends FrameLayout {
     }
 
     public void setLeftTopCornerRadius(int leftTopCornerRadius) {
+        if (this.leftTopCornerRadius == leftTopCornerRadius) {
+            return;
+        }
         this.leftTopCornerRadius = leftTopCornerRadius;
         this.leftTopCornerRadius = Math.min(this.leftTopCornerRadius, (viewWidth - getPaddingLeft() - getPaddingRight()) / 2);
         this.leftTopCornerRadius = Math.min(this.leftTopCornerRadius, (viewHeight - getPaddingTop() - getPaddingBottom()) / 2);
@@ -481,6 +501,9 @@ public class LCardView extends FrameLayout {
 
 
     public void setRightTopCornerRadius(int rightTopCornerRadius) {
+        if (this.rightTopCornerRadius == rightTopCornerRadius) {
+            return;
+        }
         this.rightTopCornerRadius = rightTopCornerRadius;
         this.rightTopCornerRadius = Math.min(this.rightTopCornerRadius, (viewWidth - getPaddingLeft() - getPaddingRight()) / 2);
         this.rightTopCornerRadius = Math.min(this.rightTopCornerRadius, (viewHeight - getPaddingTop() - getPaddingBottom()) / 2);
@@ -489,6 +512,9 @@ public class LCardView extends FrameLayout {
     }
 
     public void setRightBottomCornerRadius(int rightBottomCornerRadius) {
+        if (this.rightBottomCornerRadius == rightBottomCornerRadius) {
+            return;
+        }
         this.rightBottomCornerRadius = rightBottomCornerRadius;
         this.rightBottomCornerRadius = Math.min(this.rightBottomCornerRadius, (viewWidth - getPaddingLeft() - getPaddingRight()) / 2);
         this.rightBottomCornerRadius = Math.min(this.rightBottomCornerRadius, (viewHeight - getPaddingTop() - getPaddingBottom()) / 2);
@@ -497,6 +523,9 @@ public class LCardView extends FrameLayout {
     }
 
     public void setLeftBottomCornerRadius(int leftBottomCornerRadius) {
+        if (this.leftBottomCornerRadius == leftBottomCornerRadius) {
+            return;
+        }
         this.leftBottomCornerRadius = leftBottomCornerRadius;
         this.leftBottomCornerRadius = Math.min(this.leftBottomCornerRadius, (viewWidth - getPaddingLeft() - getPaddingRight()) / 2);
         this.leftBottomCornerRadius = Math.min(this.leftBottomCornerRadius, (viewHeight - getPaddingTop() - getPaddingBottom()) / 2);
@@ -525,9 +554,19 @@ public class LCardView extends FrameLayout {
     }
 
     public void setShadowColor(@ColorInt int color) {
+        if (isSameRGB(color)) {
+            return;
+        }
         initColors(color);
         createDrawables();
         invalidate();
+    }
+
+    private boolean isSameRGB(int color) {
+        if (shadowColor == color) {
+            return true;
+        }
+        return Color.red(color) == Color.red(shadowColor) && Color.green(color) == Color.green(shadowColor) && Color.blue(color) == Color.blue(shadowColor);
     }
 
     private void initColors(@ColorInt int color) {
@@ -550,8 +589,13 @@ public class LCardView extends FrameLayout {
 
     //0~ 255
     public void setShadowAlpha(int alpha) {
+        if (this.shadowAlpha == alpha) {
+            return;
+        }
         this.shadowAlpha = alpha;
-        setShadowColor(shadowColor);
+        initColors(shadowColor);
+        createDrawables();
+        invalidate();
     }
 
     public void setElevationAffectShadowColor(boolean elevationAffectShadowColor) {
@@ -579,13 +623,15 @@ public class LCardView extends FrameLayout {
     }
 
     public void setElevation(int elevation) {
+        if (this.elevation == elevation) {
+            return;
+        }
         this.elevation = elevation;
         if (elevationAffectShadowColor) {
             initColors(shadowColor);
         }
         if (elevationAffectShadowSize) {
             int shadowSize = elevation + 12;
-
             if (this.shadowSize != shadowSize) {
                 this.shadowSize = shadowSize;
                 onShadowSizeChange();
@@ -596,6 +642,9 @@ public class LCardView extends FrameLayout {
     }
 
     public void setCornerRadius(int radius) {
+        if (this.cornerRadius == radius) {
+            return;
+        }
         this.cornerRadius = radius;
         leftTopCornerRadius = leftBottomCornerRadius = rightTopCornerRadius = rightBottomCornerRadius = cornerRadius;
         createDrawables();
@@ -607,10 +656,11 @@ public class LCardView extends FrameLayout {
             //This field make shadow size change with elevation.
             return;
         }
-        if (this.shadowSize != shadowSize) {
-            this.shadowSize = shadowSize;
-            onShadowSizeChange();
+        if (this.shadowSize == shadowSize) {
+            return;
         }
+        this.shadowSize = shadowSize;
+        onShadowSizeChange();
 
         createDrawables();
         invalidate();
@@ -694,16 +744,26 @@ public class LCardView extends FrameLayout {
     }
 
     public void setCardBackgroundColor(int cardBackgroundColor) {
+        if (this.cardBackgroundColor == cardBackgroundColor) {
+            return;
+        }
         this.cardBackgroundColor = cardBackgroundColor;
         invalidate();
     }
 
     public void setShadowOffsetCenter(int offset) {
         int maxOffset = shadowSize / 2;
-        this.leftOffset = Math.min(maxOffset, offset);
-        this.rightOffset = Math.min(maxOffset, offset);
-        this.topOffset = Math.min(maxOffset, offset);
-        this.bottomOffset = Math.min(maxOffset, offset);
+        int leftOffset = Math.min(maxOffset, offset);
+        int rightOffset = Math.min(maxOffset, offset);
+        int topOffset = Math.min(maxOffset, offset);
+        int bottomOffset = Math.min(maxOffset, offset);
+        if (this.leftOffset == leftOffset && this.rightOffset == rightOffset && this.topOffset == topOffset && this.bottomOffset == bottomOffset) {
+            return;
+        }
+        this.leftOffset = leftOffset;
+        this.rightOffset = rightOffset;
+        this.topOffset = topOffset;
+        this.bottomOffset = bottomOffset;
         onShadowSizeChange();
         createDrawables();
         invalidate();
@@ -711,10 +771,17 @@ public class LCardView extends FrameLayout {
 
     public void setShadowOffset(int offset) {
         int maxOffset = shadowSize / 2;
-        this.leftOffset = Math.min(maxOffset, -offset);
-        this.topOffset = Math.min(maxOffset, -offset);
-        this.rightOffset = Math.min(maxOffset, offset);
-        this.bottomOffset = Math.min(maxOffset, offset);
+        int leftOffset = Math.min(maxOffset, -offset);
+        int rightOffset = Math.min(maxOffset, -offset);
+        int topOffset = Math.min(maxOffset, offset);
+        int bottomOffset = Math.min(maxOffset, offset);
+        if (this.leftOffset == leftOffset && this.rightOffset == rightOffset && this.topOffset == topOffset && this.bottomOffset == bottomOffset) {
+            return;
+        }
+        this.leftOffset = leftOffset;
+        this.rightOffset = rightOffset;
+        this.topOffset = topOffset;
+        this.bottomOffset = bottomOffset;
         onShadowSizeChange();
         createDrawables();
         invalidate();
@@ -726,8 +793,12 @@ public class LCardView extends FrameLayout {
 
     public void setLeftOffset(int leftOffset) {
         int maxOffset = shadowSize / 2;
-        this.leftOffset = Math.min(maxOffset, leftOffset);
-        int leftPadding = shadowSize + leftOffset;
+        leftOffset = Math.min(maxOffset, leftOffset);
+        if (this.leftOffset == leftOffset) {
+            return;
+        }
+        this.leftOffset = leftOffset;
+        int leftPadding = shadowSize + this.leftOffset;
         leftPadding = Math.max(leftPadding, 0);
         int paddingLeft = getPaddingLeft();
         if (paddingLeft != leftPadding) {
@@ -743,8 +814,12 @@ public class LCardView extends FrameLayout {
 
     public void setTopOffset(int topOffset) {
         int maxOffset = shadowSize / 2;
-        this.topOffset = Math.min(maxOffset, topOffset);
-        int topPadding = shadowSize + topOffset;
+        topOffset = Math.min(maxOffset, topOffset);
+        if (this.topOffset == topOffset) {
+            return;
+        }
+        this.topOffset = topOffset;
+        int topPadding = shadowSize + this.topOffset;
         topPadding = Math.max(topPadding, 0);
         int paddingTop = getPaddingTop();
         if (paddingTop != topPadding) {
@@ -760,8 +835,12 @@ public class LCardView extends FrameLayout {
 
     public void setRightOffset(int rightOffset) {
         int maxOffset = shadowSize / 2;
-        this.rightOffset = Math.min(maxOffset, rightOffset);
-        int rightPadding = shadowSize + rightOffset;
+        rightOffset = Math.min(maxOffset, rightOffset);
+        if (this.rightOffset == rightOffset) {
+            return;
+        }
+        this.rightOffset = rightOffset;
+        int rightPadding = shadowSize + this.rightOffset;
         rightPadding = Math.max(rightPadding, 0);
         int paddingRight = getPaddingRight();
         if (paddingRight != rightPadding) {
@@ -777,8 +856,12 @@ public class LCardView extends FrameLayout {
 
     public void setBottomOffset(int bottomOffset) {
         int maxOffset = shadowSize / 2;
-        this.bottomOffset = Math.min(maxOffset, bottomOffset);
-        int bottomPadding = shadowSize + bottomOffset;
+        bottomOffset = Math.min(maxOffset, bottomOffset);
+        if (this.bottomOffset == bottomOffset) {
+            return;
+        }
+        this.bottomOffset = bottomOffset;
+        int bottomPadding = shadowSize + this.bottomOffset;
         bottomPadding = Math.max(bottomPadding, 0);
         int paddingBottom = getPaddingBottom();
         if (paddingBottom != bottomPadding) {
@@ -790,6 +873,9 @@ public class LCardView extends FrameLayout {
 
     public void setShadowFluidShape(int shape) {
         if (shape != ADSORPTION && shape != LINEAR) {
+            return;
+        }
+        if (this.shadowFluidShape == shape) {
             return;
         }
         this.shadowFluidShape = shape;

@@ -5,7 +5,7 @@ gradle中的引用：
 ~~~
 gradle:
 dependencies {
-    implementation 'org.linwg1988:lcardview:1.5.1'
+    implementation 'org.linwg1988:lcardview:1.5.2'
 }
 ~~~
 
@@ -44,6 +44,8 @@ setShadowOffsetCenter(int offset)
 setShadowOffset(int offset)
 ~~~
 **进行以卡片左上角顶点的整体偏移。**</br>
+
+**1.5.2优化阴影创建的条件，只有在参数变化时才重新创建，修复View在没有测量完成时设置卡片属性导致的阴影异常**</br>
 
 下面是布局里面可使用的属性：</br>
 

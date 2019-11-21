@@ -5,10 +5,10 @@
     android:layout_height="wrap_content"
     app:shadowFluidShape="adsorption"
     android:paddingTop="10dp"
-    app:cornerRadius="30dp"
+    app:cornerRadius="10dp"
     app:shadowColor="#000"
     app:shadowStartAlpha="100"
-    app:cardBackgroundColor="#f00">
+    app:cardBackgroundColor="#ffffff">
 
 
     <LinearLayout
