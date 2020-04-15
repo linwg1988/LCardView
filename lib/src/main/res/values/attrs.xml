@@ -27,6 +27,7 @@
         <attr name="rightOffset" format="dimension"/>
         <attr name="topOffset" format="dimension"/>
         <attr name="bottomOffset" format="dimension"/>
-        <attr name="fixedContentSize" format="boolean"/>
+        <attr name="fixedContentWidth" format="boolean"/>
+        <attr name="fixedContentHeight" format="boolean"/>
     </declare-styleable>
 </resources>

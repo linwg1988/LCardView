@@ -40,7 +40,8 @@ public class LCardView extends FrameLayout {
     private int cornerRadius = 0;
     private boolean elevationAffectShadowColor = false;
     private boolean elevationAffectShadowSize = false;
-    private boolean fixedContentSize = false;
+    private boolean fixedContentHeight = false;
+    private boolean fixedContentWidth = false;
     private int leftTopCornerRadius = 0;
     private int rightTopCornerRadius = 0;
     private int rightBottomCornerRadius = 0;
@@ -138,8 +139,10 @@ public class LCardView extends FrameLayout {
                 topOffset = typedArray.getDimensionPixelSize(index, 0);
             } else if (index == R.styleable.LCardView_bottomOffset) {
                 bottomOffset = typedArray.getDimensionPixelSize(index, 0);
-            } else if (index == R.styleable.LCardView_fixedContentSize) {
-                fixedContentSize = typedArray.getBoolean(index, false);
+            } else if (index == R.styleable.LCardView_fixedContentWidth) {
+                fixedContentWidth = typedArray.getBoolean(index, false);
+            }else if (index == R.styleable.LCardView_fixedContentHeight) {
+                fixedContentHeight = typedArray.getBoolean(index, false);
             }
         }
 
@@ -212,7 +215,7 @@ public class LCardView extends FrameLayout {
                         heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(minHeight, MeasureSpec.getSize(heightMeasureSpec)), heightMode);
                     case 0:
                     default:
-                        super.onMeasure(fixedContentSize ? 0 : widthMeasureSpec, fixedContentSize ? 0 : heightMeasureSpec);
+                        super.onMeasure(fixedContentWidth ? 0 : widthMeasureSpec, fixedContentHeight ? 0 : heightMeasureSpec);
                 }
         }
         if (viewWidth == -3) {
@@ -745,12 +748,20 @@ public class LCardView extends FrameLayout {
         return shadowAlpha;
     }
 
-    public boolean isFixedContentSize() {
-        return fixedContentSize;
+    public boolean isFixedContentHeight() {
+        return fixedContentHeight;
     }
 
-    public void setFixedContentSize(boolean fixedContentSize) {
-        this.fixedContentSize = fixedContentSize;
+    public void setFixedContentHeight(boolean fixedContentHeight) {
+        this.fixedContentHeight = fixedContentHeight;
+    }
+
+    public boolean isFixedContentWidth() {
+        return fixedContentWidth;
+    }
+
+    public void setFixedContentWidth(boolean fixedContentWidth) {
+        this.fixedContentWidth = fixedContentWidth;
     }
 
     public void setCardBackgroundColor(int cardBackgroundColor) {
