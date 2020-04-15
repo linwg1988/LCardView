@@ -1,6 +1,7 @@
 package www.linwg.org.app;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -182,7 +183,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initSeekBar(SeekBar seekBar, int max) {
-        seekBar.setMin(0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            seekBar.setMin(0);
+        }
         seekBar.setMax(max);
         seekBar.setProgress(max / 2);
     }

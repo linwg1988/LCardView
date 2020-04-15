@@ -1,35 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<www.linwg.org.lib.LCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:shadowFluidShape="adsorption"
-    android:paddingTop="10dp"
-    app:cornerRadius="10dp"
-    app:shadowColor="#000"
-    app:shadowStartAlpha="100"
-    app:cardBackgroundColor="#ffffff">
+    android:layout_height="wrap_content">
 
-
-    <LinearLayout
+    <www.linwg.org.lib.LCardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:cardBackgroundColor="#ffffff"
+        app:cornerRadius="10dp"
+        app:shadowSize="10dp"
+        app:shadowColor="#000"
+        app:shadowFluidShape="linear"
+        app:shadowStartAlpha="100">
 
-        <ImageView
-            android:id="@+id/imageView"
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher"
-            android:layout_height="100dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/testView"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="#fff"
-            android:gravity="center" />
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/testView"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#ff0"
+                android:gravity="center" />
+        </LinearLayout>
 
 
-</www.linwg.org.lib.LCardView>
+    </www.linwg.org.lib.LCardView>
+</LinearLayout>

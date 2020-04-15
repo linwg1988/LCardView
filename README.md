@@ -5,7 +5,7 @@ gradle中的引用：
 ~~~
 gradle:
 dependencies {
-    implementation 'org.linwg1988:lcardview:1.5.2'
+    implementation 'org.linwg1988:lcardview:1.5.3'
 }
 ~~~
 
@@ -41,9 +41,13 @@ setShadowOffsetCenter(int offset)
 ~~~
 **进行以卡片中心的整体偏移。**</br>
 
-
 **1.5.2优化阴影创建的条件，只有在参数变化时才重新创建，修复View在没有测量完成时设置卡片属性导致的阴影异常,**</br>
 **去除setShadowOffset()方法。**</br>
+
+**1.5.3新增属性 fixedContentSize.使用场景：卡片布局的父布局因为动画需要大小动态变化来对**</br>
+**卡片布局进行隐藏或显示，若卡片尺寸是根据内部子控件大小来获得，卡片尺寸属性设置为 wrap_content,**</br>
+**此时卡片的父布局动态修改尺寸时会导致卡片重新测量大小。该属性值为 true 时，父布局的大小不影响卡片**</br>
+**的测量内部子控件的结果，故而也不会触发阴影重新创建以及内容的裁切大小。**</br>
 
 下面是布局里面可使用的属性：</br>
 
@@ -72,6 +76,7 @@ setShadowOffsetCenter(int offset)
 | **attr:rightOffset** | **卡片右半区阴影偏移量** |
 | **attr:topOffset** | **卡片上半区阴影偏移量** |
 | **attr:bottomOffset** | **卡片右半区阴影偏移量** |
+| attr:fixedContentSize | 控件大小是否固定为内容大小 |
 
 在Java代码中也有对应相关的属性设置方法。
 

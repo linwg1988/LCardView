@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="LCardView">
-
         <attr name="leftShadowWidth" format="dimension"/>
         <attr name="topShadowHeight" format="dimension"/>
         <attr name="rightShadowWidth" format="dimension"/>
@@ -28,5 +27,6 @@
         <attr name="rightOffset" format="dimension"/>
         <attr name="topOffset" format="dimension"/>
         <attr name="bottomOffset" format="dimension"/>
+        <attr name="fixedContentSize" format="boolean"/>
     </declare-styleable>
 </resources>

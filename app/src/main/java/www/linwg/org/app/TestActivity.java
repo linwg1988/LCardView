@@ -27,8 +27,9 @@ public class TestActivity extends AppCompatActivity {
         recyclerView.setAdapter(new Ad(this));
     }
 
-    private static class Ad extends RecyclerView.Adapter<VH>{
+    private static class Ad extends RecyclerView.Adapter<VH> {
         private Context context;
+        boolean b;
 
         private Ad(Context context) {
             this.context = context;
@@ -41,22 +42,33 @@ public class TestActivity extends AppCompatActivity {
 
         @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            if(viewType == 0){
+            if (viewType == 0) {
                 View view = LayoutInflater.from(context).inflate(R.layout.item_test, parent, false);
                 return new VH(view);
-            }else{
+            } else {
                 View view = LayoutInflater.from(context).inflate(R.layout.item_test2, parent, false);
                 return new VH(view);
             }
         }
 
         @Override
-        public void onBindViewHolder(VH holder, int position) {
-            if(holder.itemView instanceof LCardView){
+        public void onBindViewHolder(final VH holder, int position) {
+            if (holder.itemView instanceof LCardView) {
                 ((LCardView) holder.itemView).setShadowAlpha(new Random().nextInt(255));
             }
             holder.imageView.setImageResource(R.drawable.ic_launcher_background);
-            holder.testView.setText(""+holder.getLayoutPosition());
+            holder.testView.setText("" + holder.getLayoutPosition());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (b) {
+                        LayoutAnimator.ofHeight(holder.itemView, 50, 400).start();
+                    } else {
+                        LayoutAnimator.ofHeight(holder.itemView, 400, 50).start();
+                    }
+                    b = !b;
+                }
+            });
         }
 
         @Override
@@ -65,13 +77,16 @@ public class TestActivity extends AppCompatActivity {
         }
     }
 
-    private static class VH extends RecyclerView.ViewHolder{
+    private static class VH extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView testView;
+        LCardView cardView;
+
         public VH(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
             testView = itemView.findViewById(R.id.testView);
+            cardView = itemView.findViewById(R.id.cardView);
         }
     }
 }

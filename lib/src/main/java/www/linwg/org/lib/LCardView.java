@@ -18,11 +18,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import www.linwg.org.lcardview.R;
 
@@ -44,6 +40,7 @@ public class LCardView extends FrameLayout {
     private int cornerRadius = 0;
     private boolean elevationAffectShadowColor = false;
     private boolean elevationAffectShadowSize = false;
+    private boolean fixedContentSize = false;
     private int leftTopCornerRadius = 0;
     private int rightTopCornerRadius = 0;
     private int rightBottomCornerRadius = 0;
@@ -141,6 +138,8 @@ public class LCardView extends FrameLayout {
                 topOffset = typedArray.getDimensionPixelSize(index, 0);
             } else if (index == R.styleable.LCardView_bottomOffset) {
                 bottomOffset = typedArray.getDimensionPixelSize(index, 0);
+            } else if (index == R.styleable.LCardView_fixedContentSize) {
+                fixedContentSize = typedArray.getBoolean(index, false);
             }
         }
 
@@ -188,10 +187,10 @@ public class LCardView extends FrameLayout {
         topOffset = Math.min(maxOffset, topOffset);
         rightOffset = Math.min(maxOffset, rightOffset);
         bottomOffset = Math.min(maxOffset, bottomOffset);
-        effectLeftOffset = leftOffset > 0 ? 0 : leftOffset;
-        effectTopOffset = topOffset > 0 ? 0 : topOffset;
-        effectRightOffset = rightOffset > 0 ? 0 : rightOffset;
-        effectBottomOffset = bottomOffset > 0 ? 0 : bottomOffset;
+        effectLeftOffset = Math.min(leftOffset, 0);
+        effectTopOffset = Math.min(topOffset, 0);
+        effectRightOffset = Math.min(rightOffset, 0);
+        effectBottomOffset = Math.min(bottomOffset, 0);
     }
 
     @Override
@@ -201,19 +200,19 @@ public class LCardView extends FrameLayout {
         switch (widthMode) {
             case MeasureSpec.AT_MOST:
             case MeasureSpec.EXACTLY:
-                heightMode = (int) Math.ceil((double) getMinWidth());
+                heightMode = (int) Math.ceil(getMinWidth());
                 widthMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(heightMode, MeasureSpec.getSize(widthMeasureSpec)), widthMode);
-            case 0:
+            case MeasureSpec.UNSPECIFIED:
             default:
                 heightMode = MeasureSpec.getMode(heightMeasureSpec);
                 switch (heightMode) {
                     case MeasureSpec.AT_MOST:
                     case MeasureSpec.EXACTLY:
-                        int minHeight = (int) Math.ceil((double) getMinHeight());
+                        int minHeight = (int) Math.ceil(getMinHeight());
                         heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(minHeight, MeasureSpec.getSize(heightMeasureSpec)), heightMode);
                     case 0:
                     default:
-                        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                        super.onMeasure(fixedContentSize ? 0 : widthMeasureSpec, fixedContentSize ? 0 : heightMeasureSpec);
                 }
         }
         if (viewWidth == -3) {
@@ -744,6 +743,14 @@ public class LCardView extends FrameLayout {
 
     public int getShadowAlpha() {
         return shadowAlpha;
+    }
+
+    public boolean isFixedContentSize() {
+        return fixedContentSize;
+    }
+
+    public void setFixedContentSize(boolean fixedContentSize) {
+        this.fixedContentSize = fixedContentSize;
     }
 
     public void setCardBackgroundColor(int cardBackgroundColor) {
