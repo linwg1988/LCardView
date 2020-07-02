@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LCardView">
+        <attr name="leftShadowWidth" format="dimension"/>
+        <attr name="topShadowHeight" format="dimension"/>
+        <attr name="rightShadowWidth" format="dimension"/>
+        <attr name="bottomShadowHeight" format="dimension"/>
+        <attr name="shadowSize" format="dimension"/>
+        <attr name="shadowColor" format="color"/>
+        <attr name="shadowStartAlpha" format="integer"/>
+        <attr name="shadowFluidShape" format="enum">
+            <enum name="adsorption" value="0"/>
+            <enum name="linear" value="1"/>
+        </attr>
+        <attr name="cardBackgroundColor" format="color"/>
+        <attr name="cornerRadius" format="dimension"/>
+        <attr name="leftTopCornerRadius" format="dimension"/>
+        <attr name="rightTopCornerRadius" format="dimension"/>
+        <attr name="leftBottomCornerRadius" format="dimension"/>
+        <attr name="rightBottomCornerRadius" format="dimension"/>
+        <attr name="elevation" format="dimension"/>
+        <attr name="elevationAffectShadowColor" format="boolean"/>
+        <attr name="elevationAffectShadowSize" format="boolean"/>
+        <attr name="xOffset" format="dimension"/>
+        <attr name="yOffset" format="dimension"/>
+        <attr name="leftOffset" format="dimension"/>
+        <attr name="rightOffset" format="dimension"/>
+        <attr name="topOffset" format="dimension"/>
+        <attr name="bottomOffset" format="dimension"/>
+        <attr name="fixedContentWidth" format="boolean"/>
+        <attr name="fixedContentHeight" format="boolean"/>
+        <attr name="paperSyncCorner" format="boolean"/>
+        <attr name="paperCorner" format="dimension"/>
+        <attr name="linearBookEffect" format="boolean"/>
+        <attr name="bookRadius" format="integer"/>
+        <attr name="curveShadowEffect" format="boolean"/>
+        <attr name="curvature" format="float"/>
+        <attr name="useShadowPool" format="boolean"/>
+        <attr name="bindLifeCircle" format="boolean"/>
+    </declare-styleable>
+</resources>

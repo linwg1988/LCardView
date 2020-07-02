@@ -1,18 +1,15 @@
 package www.linwg.org.app;
 
+import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import www.linwg.org.lib.LCardView;
 
@@ -22,172 +19,227 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final LCardView cardView = findViewById(R.id.cardView);
-        SeekBar sbLeftTop = findViewById(R.id.sbLeftTop);
-        SeekBar sbRightTop = findViewById(R.id.sbRightTop);
-        SeekBar sbRightBottom = findViewById(R.id.sbRightBottom);
-        SeekBar sbLeftBottom = findViewById(R.id.sbLeftBottom);
-        SeekBar sbShadowAlpha = findViewById(R.id.sbShadowAlpha);
-        SeekBar sbZIndex = findViewById(R.id.sbZIndex);
-        SeekBar sbShadowSize = findViewById(R.id.sbShadowSize);
-        SeekBar sbCorner = findViewById(R.id.sbCorner);
-        SeekBar sbLeftOffset = findViewById(R.id.sbLeftOffset);
-        SeekBar sbTopOffset = findViewById(R.id.sbTopOffset);
-        SeekBar sbRightOffset = findViewById(R.id.sbRightOffset);
-        SeekBar sbBottomOffset = findViewById(R.id.sbBottomOffset);
-        CheckBox cbSize = findViewById(R.id.cbSize);
-        CheckBox cbShowPic = findViewById(R.id.cbShowPic);
-        final CheckBox cbColor = findViewById(R.id.cbColor);
-        final CheckBox cbMode = findViewById(R.id.cbMode);
-        final EditText etColor = findViewById(R.id.etColor);
-        final Button btnSure = findViewById(R.id.btnSure);
-        final ImageView ivGirl = findViewById(R.id.ivGirl);
-        final SeekBar sbCenterOffset = findViewById(R.id.sbCenterOffset);
-        final int bottomShadowSize = cardView.getBottomShadowSize();
+        final LCardView cardCR = findViewById(R.id.cardCR);
+        SeekBar sbLT = findViewById(R.id.sbLT);
+        SeekBar sbRT = findViewById(R.id.sbRT);
+        SeekBar sbRB = findViewById(R.id.sbRB);
+        SeekBar sbLB = findViewById(R.id.sbLB);
+        SeekBar sbAll = findViewById(R.id.sbAll);
+        sbLT.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardCR.setLeftTopCornerRadius(progress);
+            }
+        });
+        sbRT.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardCR.setRightTopCornerRadius(progress);
+            }
+        });
+        sbLB.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardCR.setLeftBottomCornerRadius(progress);
+            }
+        });
+        sbRB.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardCR.setRightBottomCornerRadius(progress);
+            }
+        });
+        sbAll.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardCR.setCornerRadius(progress);
+            }
+        });
 
-        sbCenterOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+        final LCardView cardSS = findViewById(R.id.cardSS);
+        final SeekBar sbAlpha = findViewById(R.id.sbAlpha);
+        final SeekBar sbR = findViewById(R.id.sbR);
+        final SeekBar sbG = findViewById(R.id.sbG);
+        final SeekBar sbB = findViewById(R.id.sbB);
+        final SeekBar sbSS = findViewById(R.id.sbSS);
+        final RadioGroup rgShape = findViewById(R.id.rgShape);
+        sbAlpha.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setShadowOffsetCenter(progress - bottomShadowSize / 2);
+                cardSS.setShadowAlpha(progress);
             }
         });
-        sbLeftOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+        sbR.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setLeftOffset(progress - bottomShadowSize / 2);
+                cardSS.setShadowColor(Color.argb(sbAlpha.getProgress(), sbR.getProgress(), sbG.getProgress(), sbB.getProgress()));
             }
         });
-        sbTopOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+        sbG.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setTopOffset(progress - bottomShadowSize / 2);
+                cardSS.setShadowColor(Color.argb(sbAlpha.getProgress(), sbR.getProgress(), sbG.getProgress(), sbB.getProgress()));
             }
         });
-        sbRightOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+        sbB.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setRightOffset(progress - bottomShadowSize / 2);
+                cardSS.setShadowColor(Color.argb(sbAlpha.getProgress(), sbR.getProgress(), sbG.getProgress(), sbB.getProgress()));
             }
         });
-        sbBottomOffset.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+        sbSS.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setBottomOffset(progress - bottomShadowSize / 2);
+                cardSS.setShadowSize(progress);
             }
         });
-        sbLeftTop.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+        rgShape.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setLeftTopCornerRadius(progress);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                cardSS.setShadowFluidShape(checkedId == R.id.rbOne ? LCardView.ADSORPTION : LCardView.LINEAR);
             }
         });
-        sbRightTop.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+
+        final LCardView cardEle = findViewById(R.id.cardEle);
+        final CheckBox cbAlpha = findViewById(R.id.cbAlpha);
+        final CheckBox cbSize = findViewById(R.id.cbSize);
+        final SeekBar sbEle = findViewById(R.id.sbEle);
+        cbAlpha.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setRightTopCornerRadius(progress);
-            }
-        });
-        sbRightBottom.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setRightBottomCornerRadius(progress);
-            }
-        });
-        sbLeftBottom.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setLeftBottomCornerRadius(progress);
-            }
-        });
-        sbShadowAlpha.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setShadowAlpha(progress);
-            }
-        });
-        sbShadowSize.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setShadowSize(progress);
-            }
-        });
-        sbCorner.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setCornerRadius(progress);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardEle.setElevationAffectShadowColor(isChecked);
             }
         });
         cbSize.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                cardView.setElevationAffectShadowSize(isChecked);
+                cardEle.setElevationAffectShadowSize(isChecked);
             }
         });
-        cbColor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                cardView.setElevationAffectShadowColor(isChecked);
-            }
-        });
-        cbMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                cardView.setShadowFluidShape(isChecked ? LCardView.LINEAR : LCardView.ADSORPTION);
-            }
-        });
-        cbShowPic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ivGirl.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
-            }
-        });
-        sbZIndex.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+        sbEle.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                cardView.setElevation(progress);
+                cardEle.setElevation(progress);
             }
         });
-        etColor.addTextChangedListener(new TextWatcher() {
+
+        final LCardView cardOS = findViewById(R.id.cardOS);
+        final SeekBar sbLO = findViewById(R.id.sbLO);
+        final SeekBar sbRO = findViewById(R.id.sbRO);
+        final SeekBar sbTO = findViewById(R.id.sbTO);
+        final SeekBar sbBO = findViewById(R.id.sbBO);
+        final SeekBar sbFourO = findViewById(R.id.sbFourO);
+        final int offset = 100 - cardOS.getShadowSize() / 2;
+        sbLO.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                btnSure.setEnabled(s.length() == 6);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardOS.setLeftOffset(progress - offset);
             }
         });
-        btnSure.setOnClickListener(new View.OnClickListener() {
+        sbRO.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardOS.setRightOffset(progress - offset);
+            }
+        });
+        sbTO.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardOS.setTopOffset(progress - offset);
+            }
+        });
+        sbBO.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardOS.setBottomOffset(progress - offset);
+            }
+        });
+        sbFourO.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardOS.setShadowOffsetCenter(progress - offset);
+            }
+        });
+
+        final LCardView cardBook = findViewById(R.id.cardBook);
+        final SeekBar sbAngle = findViewById(R.id.sbAngle);
+        final CheckBox cbBook = findViewById(R.id.cbBook);
+        final CheckBox cbBookShape = findViewById(R.id.cbBookShape);
+        cbBook.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardBook.setLinearBookEffect(isChecked);
+            }
+        });
+        cbBookShape.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardBook.setShadowFluidShape(isChecked ? LCardView.LINEAR : LCardView.ADSORPTION);
+            }
+        });
+        sbAngle.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardBook.setBookRadius(progress);
+            }
+        });
+
+        final LCardView cardMesh = findViewById(R.id.cardMesh);
+        final CheckBox cbMesh = findViewById(R.id.cbMesh);
+        final CheckBox cbMeshShape = findViewById(R.id.cbMeshShape);
+        final SeekBar sbCur = findViewById(R.id.sbCur);
+        cbMesh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardMesh.setCurveShadowEffect(isChecked);
+                if (isChecked) {
+                    cbMeshShape.setChecked(true);
+                }
+                cbMeshShape.setEnabled(!isChecked);
+            }
+        });
+        cbMeshShape.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardMesh.setShadowFluidShape(isChecked ? LCardView.LINEAR : LCardView.ADSORPTION);
+            }
+        });
+        sbCur.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardMesh.setCurvature(progress / 10f);
+            }
+        });
+
+        final LCardView cardSync = findViewById(R.id.cardSync);
+        final CheckBox cbSync = findViewById(R.id.cbSync);
+        final SeekBar sbCardCN = findViewById(R.id.sbCardCN);
+        final SeekBar sbShadowCN = findViewById(R.id.sbShadowCN);
+        cbSync.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardSync.setPaperSyncCorner(isChecked);
+            }
+        });
+        sbCardCN.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardSync.setPaperCorner(progress);
+            }
+        });
+        sbShadowCN.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardSync.setCornerRadius(progress);
+            }
+        });
+
+        findViewById(R.id.cardLabel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    int parseColor = Color.parseColor("#" + etColor.getText());
-                    etColor.setTextColor(parseColor);
-                    cardView.setShadowColor(parseColor);
-                } catch (Exception e) {
-
-                }
+                startActivity(new Intent(MainActivity.this, CardListActivity.class));
             }
         });
-        initSeekBar(sbLeftOffset, bottomShadowSize);
-        initSeekBar(sbTopOffset, bottomShadowSize);
-        initSeekBar(sbRightOffset, bottomShadowSize);
-        initSeekBar(sbBottomOffset, bottomShadowSize);
-        initSeekBar(sbCenterOffset, bottomShadowSize);
-    }
-
-    private void initSeekBar(SeekBar seekBar, int max) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            seekBar.setMin(0);
-        }
-        seekBar.setMax(max);
-        seekBar.setProgress(max / 2);
     }
 
     private static abstract class OnSeekBarChangeAdapter implements SeekBar.OnSeekBarChangeListener {

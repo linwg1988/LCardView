@@ -1,1 +1,2 @@
+include ':kotlin'
 include ':app', ':lib'

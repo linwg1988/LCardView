@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<www.linwg.org.lib.LCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:bindLifeCircle="true"
+    app:useShadowPool="true"
+    app:cardBackgroundColor="#ffffff"
+    app:cornerRadius="5dp"
+    app:leftOffset="-5dp"
+    app:rightOffset="-5dp"
+    app:shadowColor="#009999"
+    app:shadowSize="20dp"
+    app:shadowStartAlpha="100"
+    app:topOffset="-5dp">
 
-    <www.linwg.org.lib.LCardView
-        android:id="@+id/cardView"
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="#ffffff"
-        app:cornerRadius="10dp"
-        app:shadowSize="10dp"
-        app:shadowColor="#000"
-        app:shadowFluidShape="linear"
-        app:shadowStartAlpha="100">
+        android:layout_height="275dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/girl" />
 
+    <TextView
+        android:id="@+id/testView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:background="#aaffffff"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textSize="10sp"
+        android:textColor="#f00"
+        android:text="@string/app_name" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/testView"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="#ff0"
-                android:gravity="center" />
-        </LinearLayout>
-
-
-    </www.linwg.org.lib.LCardView>
-</LinearLayout>
+</www.linwg.org.lib.LCardView>
