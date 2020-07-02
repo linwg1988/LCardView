@@ -51,7 +51,7 @@ dependencies {
 | attr:useShadowPool | 是否启用阴影缓存池 |
 | attr:bindLifeCircle | 是否绑定生命周期 |
 
-##Change Logs.
+## Change Logs.
 
 ### Kotlin版本
 ### 0.0.1
