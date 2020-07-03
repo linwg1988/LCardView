@@ -1,4 +1,4 @@
-# LCardView <a href="screenshot/demo.apk" target="_blank">demo.apk</a>
+# LCardView 
 卡片布局，可设置阴影颜色，透明度，圆角大小，阴影宽度，阴影偏移量，卡片圆角/阴影圆角独立设置，特殊阴影效果，底部阴影扭曲效果等。</br>
 
 ### Java gradle dependencies：
@@ -16,7 +16,7 @@ dependencies {
 ~~~
 
 全新 Kotlin 版本0.0.1 不**震撼**上线，自由度更高，效果更靓。</br>
-现在卡片式的设计还是比较常见的，设计师们常常天马行空的设计出各种好看(emmm)的的卡片样式，但是安卓原生的CardView的局限性还是比较大的，比如没办法设置阴影的颜色，阴影的透明度等等等等；那既要满足设计师们的要求且又不往包里面添加.9图片使,那可以试试这款卡片布局。</br>
+现在卡片式的设计还是比较常见的，设计师们常常天马行空的设计出各种好看(emmm)的的卡片样式，但是安卓原生的CardView的局限性还是比较大的，比如没办法设置阴影的颜色，阴影的透明度等等等等；那既要满足设计师们的要求且又不往包里面添加.9图片使,那可以试试这款卡片布局。<a href="screenshot/demo.apk" target="_blank">demo.apk</a></br>
 
 LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下面一些动图将展示LCardView具有哪些功能:
 
