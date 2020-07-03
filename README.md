@@ -1,5 +1,5 @@
 # LCardView
-卡片布局，可设置阴影颜色，透明度，圆角大小，阴影宽度，阴影偏移量。</br>
+卡片布局，可设置阴影颜色，透明度，圆角大小，阴影宽度，阴影偏移量，卡片圆角/阴影圆角独立设置，特殊阴影效果，底部阴影扭曲效果等。</br>
 
 ### Java gradle dependencies：
 ~~~groovy
@@ -15,15 +15,59 @@ dependencies {
 }
 ~~~
 
+全新 Kotlin 版本0.0.1 <font color='#999999' size="1">不</font>震撼上线，自由度更高，效果更靓。
 现在卡片式的设计还是比较常见的，设计师们常常天马行空的设计出各种好看(emmm)的的卡片样式，但是安卓原生的CardView的局限性还是比较大的，比如没办法设置阴影的颜色，阴影的透明度等等等等；那既要满足设计师们的要求且又不往包里面添加.9图片使,那可以试试这款卡片布局。</br>
 
 LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下面一些动图将展示LCardView具有哪些功能:
 
-#### CornerRadius
- * 可单独设置也可同时设置圆角半径
+#### cornerRadius
+ * 可单独设置也可同时设置圆角半径。
 
 <img src="screenshot/cn.gif" width="32%" />
 
+### shadowOffset
+ * 可单独或同时设置4边的偏移量，偏移量为正时往外偏移，最大值为阴影宽度的一半，偏移量为负时往内偏移（未测试极端情况下最小偏移多少）。
+ 
+<img src="screenshot/offset.gif" width="32%" />
+
+### shadowColor/shadowAlpha
+ * 阴影的颜色与透明度分开设置，所以设置 **shadowColor(color:Int)** 时参数 color 的 alpha 是不起作用的，要设置透明度需使用 **setShadowAlpha(alpha:Int)** 。
+ 
+<img src="screenshot/color.gif" width="32%" />
+ 
+### elevation
+ * 顾名思义卡片高度，此参数可作用于透明度以及阴影宽度，改参数不改变 View 本身的 elevation 属性。
+ 
+<img src="screenshot/ele.gif" width="32%" />
+
+### paperSyncCorner & paperCorner
+ * 有时候卡片本身我们不想设置圆角，但是我们(**真的是我们而不是设计师?**)又希望阴影的圆角比较大，这个属性就起作用了，更进一步你可以为卡片和阴影分别设置不同的圆角半径(相信应该没有人会觉得卡片半径大于阴影半径好看吧)。
+ * **现仅 kotlin 库支持**
+ 
+<img src="screenshot/sync.gif" width="32%" />
+
+### linearBookEffect & bookRadius
+ * emmm,要怎么说呢,还是看图吧，图片看不了的话就下载一个 demo 看看效果吧，如果对这个效果感兴趣的话。
+ * **现仅 kotlin 库支持**
+ 
+<img src="screenshot/book.gif" width="32%" />
+
+### curveShadowEffect & curvature
+ * 这个效果还是蛮酷的，使卡片更加具有立体感了，我个人灰常中意它。
+ * **现仅 kotlin 库支持**
+ 
+<img src="screenshot/mesh.gif" width="32%" />
+
+### useShadowPool & bindLifeCircle
+ * 这两个属性适用于同样式卡片的列表，如果启用 **shadowPool** 缓存，着色器与 Bitmap 只会被第一张卡片创建，其余的都将复用缓存池中的对象，减少内存开销，由于缓存对象位于静态池中，页面销毁时需要解除卡片的缓存池对象引用，推荐使用 **bindLifeCircle** 属性使卡片与页面邦定，使页面销毁时自动移除引用，但是如果没有绑定生命周期也没有关系,LCardView 在 attach 与 detach 时会自动建立/移除引用关系（或许增加了查询开销??）。
+ * **现仅 kotlin 库支持**
+ 
+ <img src="screenshot/list.gif" width="32%" />
+ 
+ ### other
+ * **propterties()** 提供了一个可以链式设置卡片多种属性的方案，只在最后一次设置属性时重建阴影并重绘，减少对象创建优化了内存开销。
+ * **fixedContentWidth/fixedContentHeight** 改变卡片的测量方式，底下版本日志有解释，比较不常用就不多说了。
+ * 以上所有属性大可同时设置，撸出你(or设计师)想要的效果，放心的让设计师随便改阴影了，我们完全不慌。
 
 属性说明：</br>
 
