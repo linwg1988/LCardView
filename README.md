@@ -25,7 +25,7 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 <img src="screenshot/cn.gif" width="32%" />
 
 
-下面是布局里面可使用的属性：</br>
+属性说明：</br>
 
 | xml属性名称 | 中文释义 |
 | --- | --- |
@@ -98,5 +98,3 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 ### 1.2
  * 新增了一些xml初始化属性，让布局在xml中更加直观。
 
-gif效果：</br>
- ![img](https://github.com/linwg1988/LCardView/blob/master/dem2.gif) 
