@@ -186,7 +186,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="底部扭曲阴影效果（阴影流体形状必须为线性,使用代码开启扭曲效果前必须先将阴影效果设置为线性）"
+                        android:text="底部扭曲阴影效果（阴影流体形状必须为线性）"
                         android:textColor="#333"
                         android:textSize="12sp" />
 
