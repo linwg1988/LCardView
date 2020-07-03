@@ -19,6 +19,11 @@ dependencies {
 
 LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下面一些动图将展示LCardView具有哪些功能:
 
+#### CornerRadius
+ * 可单独设置也可同时设置圆角半径
+
+<img src="screenshots/cn.gif" width="32%" />
+
 
 下面是布局里面可使用的属性：</br>
 
