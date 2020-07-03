@@ -1,4 +1,4 @@
-# LCardView[![Download](screenshot/demo.apk) ](demo.apk)
+# LCardView[![Download](screenshot/demo.apk) ](screenshot/demo.apk)
 卡片布局，可设置阴影颜色，透明度，圆角大小，阴影宽度，阴影偏移量，卡片圆角/阴影圆角独立设置，特殊阴影效果，底部阴影扭曲效果等。</br>
 
 ### Java gradle dependencies：
