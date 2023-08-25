@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import www.linwg.org.app.R;
 import www.linwg.org.lib.LCardView;
 
 public class CardListActivity extends AppCompatActivity {

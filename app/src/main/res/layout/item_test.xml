@@ -6,33 +6,31 @@
     android:layout_height="wrap_content"
     app:bindLifeCircle="true"
     app:useShadowPool="true"
-    app:cardBackgroundColor="#ffffff"
-    app:cornerRadius="5dp"
-    app:leftOffset="-5dp"
-    app:rightOffset="-5dp"
-    app:shadowColor="#009999"
+    app:cornerRadius="75dp"
+    app:strokeColor="#fff"
+    app:strokeWidth="0dp"
+    app:shadowColor="#000"
+    app:topOffset="-2dp"
+    app:cardBackground="@drawable/test"
     app:shadowSize="20dp"
-    app:shadowStartAlpha="100"
-    app:topOffset="-5dp">
+    app:shadowStartAlpha="100">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="275dp"
-        android:scaleType="fitXY"
-        android:src="@mipmap/girl" />
+        android:layout_height="150dp"
+        android:scaleType="fitXY"/>
 
     <TextView
         android:id="@+id/testView"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_gravity="bottom"
-        android:background="#aaffffff"
-        android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:textSize="10sp"
-        android:textColor="#f00"
+        android:gravity="center"
+        android:paddingHorizontal="75dp"
+        android:textSize="12sp"
+        android:alpha="0.6"
+        android:textColor="#000"
         android:text="@string/app_name" />
 
 </www.linwg.org.lib.LCardView>

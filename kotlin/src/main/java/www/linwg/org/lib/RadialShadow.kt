@@ -15,6 +15,7 @@ class RadialShadow(private val colors: IntArray, private val part: Int) : BaseSh
     private val matrix = Matrix()
     var cornerRadius: Int = 0
     private var mode: Int = LCardView.ADSORPTION
+    val mPath = Path()
 
     private fun createShader(centerX: Float = center.x, centerY: Float = center.y, percentChange: Boolean = true, assign: Boolean = true): RadialGradient {
         val colors = if (alphaHalf) {
@@ -50,7 +51,6 @@ class RadialShadow(private val colors: IntArray, private val part: Int) : BaseSh
     }
 
     private fun newShader(centerX: Float, centerY: Float, colors: IntArray): RadialGradient {
-        Log.i("LCardView", "create RadialGradient at ${System.currentTimeMillis()}")
         return RadialGradient(centerX, centerY, shaderCornerRadius.toFloat(), colors, percents, Shader.TileMode.CLAMP)
     }
 
@@ -67,6 +67,59 @@ class RadialShadow(private val colors: IntArray, private val part: Int) : BaseSh
         //check center point change
         matrix.setTranslate(centerX - center.x, centerY - center.y)
         shader!!.setLocalMatrix(matrix)
+        makePath()
+    }
+
+    fun reset() {
+        offsetLeft = 0f
+        offsetTop = 0f
+        offsetRight = 0f
+        offsetBottom = 0f
+    }
+
+    fun makePath() {
+        mPath.reset()
+        when (part) {
+            IShadow.LEFT_TOP -> {
+                if (offsetRight > 0 || offsetBottom > 0) {
+                    val scaleX = (frame.width() - offsetRight) / frame.width()
+                    val scaleY = (frame.height() - offsetBottom) / frame.height()
+                    matrix.postScale(scaleX, scaleY, offsetRight, offsetBottom)
+                    shader!!.setLocalMatrix(matrix)
+                }
+
+                mPath.moveTo(frame.left, frame.centerY() - offsetBottom)
+                mPath.lineTo(frame.centerX() - offsetRight, frame.centerY() - offsetBottom)
+                mPath.lineTo(frame.centerX() - offsetRight, frame.top)
+                mPath.lineTo(frame.left, frame.top)
+                mPath.lineTo(frame.left, frame.centerY() - offsetBottom)
+                mPath.close()
+            }
+            IShadow.RIGHT_TOP -> {
+                mPath.moveTo(frame.centerX() + offsetLeft, frame.top)
+                mPath.lineTo(frame.centerX() + offsetLeft, frame.centerY() - offsetBottom)
+                mPath.lineTo(frame.right, frame.centerY() - offsetBottom)
+                mPath.lineTo(frame.right, frame.top)
+                mPath.lineTo(frame.centerX() + offsetLeft, frame.top)
+                mPath.close()
+            }
+            IShadow.RIGHT_BOTTOM -> {
+                mPath.moveTo(frame.right, frame.centerY() + offsetTop)
+                mPath.lineTo(frame.centerX() + offsetLeft, frame.centerY() + offsetTop)
+                mPath.lineTo(frame.centerX() + offsetLeft, frame.bottom)
+                mPath.lineTo(frame.right, frame.bottom)
+                mPath.lineTo(frame.right, frame.centerY() + offsetTop)
+                mPath.close()
+            }
+            IShadow.LEFT_BOTTOM -> {
+                mPath.moveTo(frame.centerX() - offsetRight, frame.bottom)
+                mPath.lineTo(frame.centerX() - offsetRight, frame.centerY() + offsetTop)
+                mPath.lineTo(frame.left, frame.centerY() + offsetTop)
+                mPath.lineTo(frame.left, frame.bottom)
+                mPath.lineTo(frame.centerX() - offsetRight, frame.bottom)
+                mPath.close()
+            }
+        }
     }
 
     override fun onShapeModeChange(mode: Int) {
@@ -92,24 +145,8 @@ class RadialShadow(private val colors: IntArray, private val part: Int) : BaseSh
         if (frame.isEmpty) {
             return
         }
-        canvas.save()
-        when (part) {
-            IShadow.LEFT_TOP -> canvas.clipRect(frame.left, frame.top, frame.centerX(), frame.centerY())
-            IShadow.RIGHT_TOP -> canvas.clipRect(frame.centerX(), frame.top, frame.right, frame.centerY())
-            IShadow.RIGHT_BOTTOM -> canvas.clipRect(frame.centerX(), frame.centerY(), frame.right, frame.bottom)
-            IShadow.LEFT_BOTTOM -> canvas.clipRect(frame.left, frame.centerY(), frame.centerX(), frame.bottom)
-        }
-        path.reset()
-        path.addCircle(frame.centerX(), frame.centerY(), cornerRadius.toFloat(), Path.Direction.CCW)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            canvas.clipOutPath(path)
-        } else {
-            @Suppress("DEPRECATION")
-            canvas.clipPath(path, Region.Op.DIFFERENCE)
-        }
         paint.shader = shader
-        canvas.drawCircle(frame.centerX(), frame.centerY(), shaderCornerRadius.toFloat(), paint)
-        canvas.restore()
+        canvas.drawPath(mPath, paint)
     }
 
     override fun recreateShader() {
@@ -121,4 +158,9 @@ class RadialShadow(private val colors: IntArray, private val part: Int) : BaseSh
         adsorptionShape = null
         shader = null
     }
+
+    var offsetRight = 0f
+    var offsetLeft = 0f
+    var offsetTop = 0f
+    var offsetBottom = 0f
 }

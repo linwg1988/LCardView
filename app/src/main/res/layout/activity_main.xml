@@ -37,6 +37,220 @@
             </www.linwg.org.lib.LCardView>
 
             <www.linwg.org.lib.LCardView
+                android:id="@+id/cardBg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cornerRadius="10dp"
+                app:shadowSize="20dp"
+                app:shadowStartAlpha="50"
+                app:strokeColor="#0aa">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <CheckBox
+                            android:id="@+id/cbRes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="resId卡片背景" />
+
+                        <CheckBox
+                            android:id="@+id/cbDrawable"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="drawable卡片背景" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="边框(0px-10px)"
+                            android:textColor="#333"
+                            android:textSize="12sp" />
+
+                        <SeekBar
+                            android:id="@+id/sbSW"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:max="10"
+                            android:min="0"
+                            android:progress="0" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <CheckBox
+                            android:id="@+id/cbGradient"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="渐变色" />
+
+                        <CheckBox
+                            android:id="@+id/cbGradientSync"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="渐变色斜方向以视图大小为基准" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="渐变色方向"
+                        android:textColor="#333" />
+
+                    <RadioGroup
+                        android:id="@+id/rgGradientDirection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="渐变色">
+
+                        <RadioButton
+                            android:id="@+id/rbLTR"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="左->右" />
+
+                        <RadioButton
+                            android:id="@+id/rbTTB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="上->下" />
+
+                        <RadioButton
+                            android:id="@+id/rbLTTRB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="左上->右下" />
+
+                        <RadioButton
+                            android:id="@+id/rbLBTRT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="左下->右上" />
+                    </RadioGroup>
+
+                    <LinearLayout
+                        android:id="@+id/llColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioGroup
+                            android:id="@+id/rgStart"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/rbRedStart"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:textColor="#f00"
+                                android:text="红" />
+
+                            <RadioButton
+                                android:id="@+id/rbGreenStart"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#0f0"
+                                android:text="绿" />
+
+                            <RadioButton
+                                android:id="@+id/rbBlueStart"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#00f"
+                                android:text="蓝" />
+                        </RadioGroup>
+
+                        <RadioGroup
+                            android:id="@+id/rgCenter"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/rbRedCenter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#ff0"
+                                android:text="黄" />
+
+                            <RadioButton
+                                android:id="@+id/rbGreenCenter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:textColor="#f0f"
+                                android:text="粉" />
+
+                            <RadioButton
+                                android:id="@+id/rbBlueCenter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#0ff"
+                                android:text="蓝" />
+                        </RadioGroup>
+
+                        <RadioGroup
+                            android:id="@+id/rgEnd"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/rbRedEnd"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#bbb"
+                                android:text="白" />
+
+                            <RadioButton
+                                android:id="@+id/rbGrayEnd"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#666"
+                                android:text="灰" />
+
+                            <RadioButton
+                                android:id="@+id/rbBlackEnd"
+                                android:layout_width="wrap_content"
+                                android:checked="true"
+                                android:layout_height="wrap_content"
+                                android:textColor="#000"
+                                android:text="黑" />
+                        </RadioGroup>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </www.linwg.org.lib.LCardView>
+
+            <www.linwg.org.lib.LCardView
                 android:id="@+id/cardCR"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,20 +1,26 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdk 33
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 29
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
         consumerProguardFiles "consumer-rules.pro"
     }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -26,20 +32,61 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
 }
 
-//apply plugin: 'com.novoda.bintray-release'
-//
-//sourceSets {
-//    main.java.srcDirs += 'src/main/kotlin'
-//}
-//
-//publish {
-//    userOrg = 'linwg1988'
-//    groupId = 'org.linwg1988'
-//    artifactId = 'lcardview-kt'
-//    publishVersion = '0.0.1'
-//    desc = 'A kotlin libary user for custom a card view.'
-//    website = 'https://github.com/linwg1988/LCardView'
-//}
+// add publish script
+publishing {
+    publications {
+        release(MavenPublication) {
+            pom {
+                name = 'LCardView'
+                description = 'A libary uses for build shadow for android view.'
+                url = 'https://github.com/linwg1988/LCardView'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'linwg1988'
+                        name = 'linwg1988'
+                        email = '273512894@qq.com'
+                    }
+                }
+
+                scm {
+                    connection = 'https://github.com/linwg1988/LCardView.git'
+                    developerConnection = 'https://github.com/linwg1988/LCardView.git'
+                    url = 'https://github.com/linwg1988/LCardView'
+                }
+            }
+
+            groupId "io.github.linwg1988"
+            artifactId "lcardview-kt"
+            version "1.0.1"
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+    repositories {
+        maven {
+            url sonartypeStaging
+            credentials {
+                username ossrhUsername // ossrhUsername is your sonatype username
+                password ossrhPassword // ossrhUsername is your sonatype password
+            }
+        }
+    }
+}
+
+// signing, this need key, secret, we put it into gradle.properties
+signing {
+    sign publishing.publications.release
+}

@@ -2,10 +2,12 @@ package www.linwg.org.lib
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
+import androidx.appcompat.content.res.AppCompatResources
 import www.linwg.org.lcardview.R
 import kotlin.math.ceil
 import kotlin.math.max
@@ -25,11 +27,19 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     var effectTopOffset = 0
     var effectRightOffset = 0
     var effectBottomOffset = 0
-    private val colors = intArrayOf(defaultShadowColor, defaultShadowColor, Color.parseColor("#00000000"), Color.parseColor("#00000000"))
+    private val colors = intArrayOf(
+        defaultShadowColor,
+        defaultShadowColor,
+        Color.parseColor("#00000000"),
+        Color.parseColor("#00000000")
+    )
     private var shadowAlpha = defaultShadowStartAlpha
     private var shadowSize = defaultShadowSize
     private var shadowColor = defaultShadowColor
+    private var strokeWidth = 0
+    private var strokeColor = 99999999
     private var cardBackgroundColor = defaultCardBackgroundColor
+    private var bgDrawable: Drawable? = null
     private var cornerRadius = 0
     private var paperCorner = 0
     private var elevationAffectShadowColor = false
@@ -45,11 +55,18 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private val highVerPath = Path()
     private val mContentPath = Path()
     private val mShadowPath = Path()
+    private val mStrokePath = Path()
     private val paint = Paint()
     private val bgColorPaint = Paint()
     private val bgPaint = Paint()
+    private val bgDrawablePaint = Paint()
     private val pathPaint = Paint()
     private val percent = 0.33f
+    private var bgGradient: LinearGradient? = null
+    private var gradientColors: String? = null
+    private var gradientSizeFollowView: Boolean = true
+    private var gradientDirection: Int = LEFT_TO_RIGHT
+    private var gradientColorArray: IntArray? = null
     private val shadowManager = ShadowManager(colors, percent)
     private var ltCornerRadius = 0
         set(value) {
@@ -90,6 +107,10 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     companion object Mode {
         const val ADSORPTION = 0
         const val LINEAR = 1
+        const val TOP_TO_BOTTOM = 0
+        const val LEFT_TO_RIGHT = 1
+        const val LEFT_TOP_TO_RIGHT_BOTTOM = 2
+        const val LEFT_BOTTOM_TO_RIGHT_TOP = 3
     }
 
     init {
@@ -104,17 +125,36 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                 R.styleable.LCardView_shadowColor -> {
                     shadowColor = typedArray.getColor(index, defaultShadowColor)
                 }
+                R.styleable.LCardView_strokeColor -> {
+                    strokeColor = typedArray.getColor(index, 99999999)
+                }
+                R.styleable.LCardView_strokeWidth -> {
+                    strokeWidth = typedArray.getDimensionPixelSize(index, 0)
+                }
                 R.styleable.LCardView_shadowStartAlpha -> {
                     shadowAlpha = typedArray.getInt(index, defaultShadowStartAlpha)
                 }
                 R.styleable.LCardView_shadowFluidShape -> {
                     typedArray.getInt(index, ADSORPTION).also { shadowManager.fluidShape = it }
                 }
+                R.styleable.LCardView_gradientColors -> {
+                    gradientColors = typedArray.getString(index)
+                }
+                R.styleable.LCardView_gradientSizeFollowView -> {
+                    gradientSizeFollowView = typedArray.getBoolean(index, true)
+                }
+                R.styleable.LCardView_gradientDirection -> {
+                    gradientDirection = typedArray.getInt(index, LEFT_TO_RIGHT)
+                }
                 R.styleable.LCardView_cardBackgroundColor -> {
                     cardBackgroundColor = typedArray.getColor(index, defaultCardBackgroundColor)
                 }
+                R.styleable.LCardView_cardBackground -> {
+                    bgDrawable = typedArray.getDrawable(index)
+                }
                 R.styleable.LCardView_curveShadowEffect -> {
-                    typedArray.getBoolean(index, false).also { shadowManager.curveShadowEffect = it }
+                    typedArray.getBoolean(index, false)
+                        .also { shadowManager.curveShadowEffect = it }
                 }
                 R.styleable.LCardView_linearBookEffect -> {
                     typedArray.getBoolean(index, false).also { shadowManager.linearBookEffect = it }
@@ -188,6 +228,8 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         bgPaint.isDither = true
         bgColorPaint.isAntiAlias = true
         bgColorPaint.isDither = true
+        bgDrawablePaint.isAntiAlias = true
+        bgDrawablePaint.isDither = true
         pathPaint.isDither = true
         pathPaint.isAntiAlias = true
         pathPaint.color = Color.WHITE
@@ -346,11 +388,121 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 //        }
         judgeOffset()
         shadowManager.createDrawables(this, shadowSize)
+        if (!gradientColors.isNullOrEmpty()) {
+            bgGradient = null
+            val colorsArr = gradientColors!!.split(",")
+            if (colorsArr.size > 1) {
+                val colors = ArrayList<Int>()
+                colorsArr.forEach {
+                    try {
+                        colors.add(Color.parseColor(it))
+                    } catch (_: Exception) {
+                    }
+                }
+                if (colors.size > 1) {
+                    createGradient(IntArray(colors.size) { colors[it] })
+                }
+            }
+        }
+
+        measureContentPath()
+    }
+
+    private fun createGradient(colors: IntArray) {
+        this.gradientColorArray = colors
+        when (gradientDirection) {
+            LEFT_TO_RIGHT -> {
+                val x0 = paddingLeft.toFloat()
+                val x1 = viewWidth - paddingRight.toFloat()
+                val y0 = paddingTop.toFloat()
+                bgGradient = LinearGradient(
+                    x0,
+                    y0,
+                    x1,
+                    y0,
+                    colors,
+                    null,
+                    Shader.TileMode.CLAMP
+                )
+            }
+            TOP_TO_BOTTOM -> {
+                val x0 = paddingLeft.toFloat()
+                val y0 = paddingTop.toFloat()
+                val y1 = viewHeight - paddingBottom.toFloat()
+                bgGradient = LinearGradient(
+                    x0,
+                    y0,
+                    x0,
+                    y1,
+                    colors,
+                    null,
+                    Shader.TileMode.CLAMP
+                )
+            }
+            LEFT_TOP_TO_RIGHT_BOTTOM -> {
+                val contentWidth = viewWidth - paddingLeft - paddingRight
+                val contentHeight = viewHeight - paddingTop - paddingBottom
+                val max = contentWidth.coerceAtLeast(contentHeight)
+                val x0 =
+                    paddingLeft + if (gradientSizeFollowView) 0f else (contentWidth - max) / 2f
+                val x1 =
+                    viewWidth - paddingRight - if (gradientSizeFollowView) 0f else (contentWidth - max) / 2f
+                val y0 =
+                    paddingTop + if (gradientSizeFollowView) 0f else (contentHeight - max) / 2f
+                val y1 =
+                    viewWidth - paddingBottom - if (gradientSizeFollowView) 0f else (contentHeight - max) / 2f
+                bgGradient = LinearGradient(
+                    x0, y0, x1, y1, colors,
+                    null,
+                    Shader.TileMode.CLAMP
+                )
+            }
+            LEFT_BOTTOM_TO_RIGHT_TOP -> {
+                val contentWidth = viewWidth - paddingLeft - paddingRight
+                val contentHeight = viewHeight - paddingTop - paddingBottom
+                val max = contentWidth.coerceAtLeast(contentHeight)
+                val x0 =
+                    paddingLeft + if (gradientSizeFollowView) 0f else (contentWidth - max) / 2f
+                val x1 =
+                    viewWidth - paddingRight - if (gradientSizeFollowView) 0f else (contentWidth - max) / 2f
+                val y1 =
+                    paddingTop + if (gradientSizeFollowView) 0f else (contentHeight - max) / 2f
+                val y0 =
+                    viewWidth - paddingBottom - if (gradientSizeFollowView) 0f else (contentHeight - max) / 2f
+                bgGradient = LinearGradient(
+                    x0, y0, x1, y1, colors,
+                    null,
+                    Shader.TileMode.CLAMP
+                )
+            }
+        }
     }
 
     private fun measureContentPath() {
         shadowManager.measureShadowPath(mShadowPath)
-        shadowManager.measureContentPath(this, paperSyncCorner, paperCorner, mContentPath)
+        shadowManager.measureContentPath(
+            this,
+            paperSyncCorner,
+            paperCorner,
+            mContentPath,
+            mStrokePath,
+            strokeWidth
+        )
+        outShadowPath.reset()
+        outShadowPath.set(mContentPath)
+        outShadowPath.op(mShadowPath, Path.Op.UNION)
+
+        inShadowPath.reset()
+        inShadowPath.set(mShadowPath)
+        inShadowPath.op(mContentPath, Path.Op.DIFFERENCE)
+
+        if (shadowManager.needDrawOffsetShadowColor(this)) {
+            shadowManager.shaderArray.forEach {
+                if (it is RadialShadow) {
+                    inShadowPath.op(it.mPath, Path.Op.DIFFERENCE)
+                }
+            }
+        }
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -359,18 +511,13 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             return
         }
         canvas.save()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
-        } else {
-            @Suppress("DEPRECATION")
-            canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null, Canvas.ALL_SAVE_FLAG)
-        }
+        canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-            pathPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.MULTIPLY)
+            pathPaint.xfermode = multiplyXfermode
             super.dispatchDraw(canvas)
             canvas.drawPath(mContentPath, pathPaint)
         } else {
-            pathPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+            pathPaint.xfermode = bgXfermode
             super.dispatchDraw(canvas)
             highVerPath.reset()
             highVerPath.addRect(0f, 0f, width.toFloat(), height.toFloat(), Path.Direction.CW)
@@ -381,34 +528,80 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         pathPaint.xfermode = null
     }
 
+    private val outShadowPath = Path()
+    private val inShadowPath = Path()
+    private val clearXfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+    private val multiplyXfermode = PorterDuffXfermode(PorterDuff.Mode.MULTIPLY)
+    private val bgXfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+
     override fun onDraw(canvas: Canvas) {
-        measureContentPath()
-        canvas.save()
-        canvas.clipPath(mShadowPath)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            canvas.clipOutPath(mContentPath)
+        if (shadowManager.needDrawOffsetShadowColor(this)) {
+            val c = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
+            bgPaint.color = shadowColor
+            canvas.drawPath(inShadowPath, bgPaint)
+            shadowManager.onDraw(canvas, mPath, paint)
+            pathPaint.xfermode = bgXfermode
+            canvas.drawPath(mContentPath, pathPaint)
+            canvas.restoreToCount(c)
+            pathPaint.xfermode = null
         } else {
-            @Suppress("DEPRECATION")
-            canvas.clipPath(mContentPath, Region.Op.DIFFERENCE)
+            val c = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
+            shadowManager.onDraw(canvas, mPath, paint)
+            pathPaint.xfermode = bgXfermode
+            canvas.drawPath(outShadowPath, pathPaint)
+            canvas.restoreToCount(c)
+            pathPaint.xfermode = null
         }
-        bgPaint.color = shadowColor
-        canvas.drawPath(mShadowPath, bgPaint)
-        canvas.restore()
+
         if (cardBackgroundColor != defaultCardBackgroundColor) {
             bgColorPaint.color = cardBackgroundColor
             canvas.drawPath(mContentPath, bgColorPaint)
+        } else if (bgGradient != null) {
+            bgColorPaint.shader = bgGradient
+            canvas.drawPath(mContentPath, bgColorPaint)
+            bgColorPaint.shader = null
+        } else if (shouldOp()) {
+            opAndDraws(canvas)
         }
-        canvas.save()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            canvas.clipOutPath(mContentPath)
+
+        if (strokeColor != 99999999 && strokeWidth > 0) {
+            bgColorPaint.strokeWidth = strokeWidth.toFloat()
+            bgColorPaint.color = strokeColor
+            bgColorPaint.style = Paint.Style.STROKE
+            canvas.drawPath(mStrokePath, bgColorPaint)
+            bgColorPaint.style = Paint.Style.FILL
+        }
+    }
+
+    private fun opAndDraws(canvas: Canvas) {
+        val c = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
+        bgDrawable!!.setBounds(
+            paddingLeft,
+            paddingTop,
+            width - paddingRight,
+            height - paddingBottom
+        )
+        val scrollX: Int = scrollX
+        val scrollY: Int = scrollY
+        if (scrollX or scrollY == 0) {
+            bgDrawable!!.draw(canvas)
         } else {
-            @Suppress("DEPRECATION")
-            canvas.clipPath(mContentPath, Region.Op.DIFFERENCE)
+            canvas.translate(scrollX.toFloat(), scrollY.toFloat())
+            bgDrawable!!.draw(canvas)
+            canvas.translate(-scrollX.toFloat(), -scrollY.toFloat())
         }
 
-        shadowManager.onDraw(canvas, mPath, paint)
+        bgDrawablePaint.xfermode = bgXfermode
+        highVerPath.reset()
+        highVerPath.addRect(0f, 0f, width.toFloat(), height.toFloat(), Path.Direction.CW)
+        highVerPath.op(mContentPath, Path.Op.DIFFERENCE)
+        canvas.drawPath(highVerPath, bgDrawablePaint)
+        bgDrawablePaint.xfermode = null
+        canvas.restoreToCount(c)
+    }
 
-        canvas.restore()
+    private fun shouldOp(): Boolean {
+        return bgDrawable != null
     }
 
     override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
@@ -651,6 +844,31 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         this.shadowSize = shadowSize
         onShadowSizeChange()
         realDraw(prompt)
+    }
+
+    fun setGradientSizeFollowView(b: Boolean) {
+        if (gradientSizeFollowView != b) {
+            gradientSizeFollowView = b
+            gradientColorArray?.let {
+                createGradient(it)
+                postInvalidate()
+            }
+        }
+    }
+
+    fun setGradientDirection(d: Int) {
+        if (gradientDirection == d) {
+            return
+        }
+        if (d != LEFT_TO_RIGHT && d != TOP_TO_BOTTOM && d != LEFT_TOP_TO_RIGHT_BOTTOM && d != LEFT_BOTTOM_TO_RIGHT_TOP) {
+            return
+        }
+        gradientDirection = d
+        gradientColorArray?.let {
+            createGradient(it)
+            postInvalidate()
+        }
+
     }
 
     private fun onShadowSizeChange() {
@@ -899,6 +1117,44 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             initColors(shadowColor)
             realDraw(prompt)
         }
+    }
+
+    fun setCardBackground(d: Drawable?) {
+        bgDrawable = d
+        postInvalidate()
+    }
+
+    fun setCardBackgroundDrawableRes(resId: Int) {
+        bgDrawable = if (resId == 0) {
+            null
+        } else {
+            AppCompatResources.getDrawable(context, resId)
+        }
+        postInvalidate()
+    }
+
+    fun setGradientColors(vararg colors: Int) {
+        if (colors.size == 1) {
+            cardBackgroundColor = colors[0]
+            postInvalidate()
+        } else if (colors.size > 1) {
+            createGradient(colors)
+            postInvalidate()
+        }
+    }
+
+    fun setStrokeWidth(i: Int) {
+        if (strokeWidth == i) return
+        strokeWidth = i
+        shadowManager.measureContentPath(
+            this,
+            paperSyncCorner,
+            paperCorner,
+            mContentPath,
+            mStrokePath,
+            strokeWidth
+        )
+        postInvalidate()
     }
 
     fun properties(): Property {

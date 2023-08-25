@@ -11,11 +11,11 @@ dependencies {
 ### Kotlin gradle dependencies：
 ~~~groovy
 dependencies {
-    implementation 'org.linwg1988:lcardview-kt:0.0.1'
+    implementation 'io.github.linwg1988:lcardview-kt:1.0.1'
 }
 ~~~
 
-全新 Kotlin 版本0.0.1 不**震撼**上线，自由度更高，效果更靓。</br>
+Kotlin 版本1.0.1 新增了部分属性(描边，渐变色等)，可有效减少shape.xml的创建</br>
 现在卡片式的设计还是比较常见的，设计师们常常天马行空的设计出各种好看(emmm)的的卡片样式，但是安卓原生的CardView的局限性还是比较大的，比如没办法设置阴影的颜色，阴影的透明度等等等等；那既要满足设计师们的要求且又不往包里面添加.9图片使,那可以试试这款卡片布局。<a href="screenshot/demo.apk" target="_blank">demo.apk</a></br>
 
 LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下面一些动图将展示LCardView具有哪些功能:
@@ -71,39 +71,52 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 
 属性说明：</br>
 
-| xml属性名称 | 中文释义 |
-| --- | --- |
-| attr:shadowSize | 四边阴影宽度 |
-| attr:shadowStartAlpha | 阴影颜色初始透明度 |
-| attr:shadowFluidShape | 阴影流动形状（线性/吸附） |
-| attr:shadowColor | 阴影颜色RGB值（透明度此处无效） |
-| attr:cardBackgroundColor | 卡片背景色 |
-| attr:cornerRadius | 阴影圆角半径 |
-| attr:leftTopCornerRadius | 左上圆角半径 |
-| attr:rightTopCornerRadius | 右上圆角半径 |
-| attr:leftBottomCornerRadius | 左下圆角半径 |
-| attr:rightBottomCornerRadius | 右下圆角半径 |
-| attr:elevation | 卡片高度 |
-| attr:elevationAffectShadowColor | 卡片高度是否影响阴影颜色 |
-| attr:elevationAffectShadowSize | 卡片高度是否影响阴影宽度 |
-| attr:leftOffset | 卡片左半区阴影偏移量 |
-| attr:rightOffset | 卡片右半区阴影偏移量 |
-| attr:topOffset | 卡片上半区阴影偏移量 |
-| attr:bottomOffset | 卡片右半区阴影偏移量 |
-| attr:fixedContentWidth | 控件宽度是否固定为内容宽度 |
-| attr:fixedContentHeight | 控件高度是否固定为内容高度 |
-| attr:paperSyncCorner | 同步卡片圆角与阴影圆角大小 |
-| attr:paperCorner | 卡片圆角半径 |
-| attr:linearBookEffect | 线性书本阴影效果 |
-| attr:bookRadius | 线性书本阴影偏移角度 |
-| attr:curveShadowEffect | 底部阴影扭曲效果 |
-| attr:curvature | 底部阴影扭曲率 |
-| attr:useShadowPool | 是否启用阴影缓存池 |
-| attr:bindLifeCircle | 是否绑定生命周期 |
+| xml属性名称                         | 中文释义                       |
+|---------------------------------|----------------------------|
+| attr:shadowSize                 | 四边阴影宽度                     |
+| attr:shadowStartAlpha           | 阴影颜色初始透明度                  |
+| attr:shadowFluidShape           | 阴影流动形状（线性/吸附）              |
+| attr:shadowColor                | 阴影颜色RGB值（透明度此处无效）          |
+| attr:cardBackgroundColor        | 卡片背景色                      |
+| attr:cornerRadius               | 阴影圆角半径                     |
+| attr:leftTopCornerRadius        | 左上圆角半径                     |
+| attr:rightTopCornerRadius       | 右上圆角半径                     |
+| attr:leftBottomCornerRadius     | 左下圆角半径                     |
+| attr:rightBottomCornerRadius    | 右下圆角半径                     |
+| attr:elevation                  | 卡片高度                       |
+| attr:elevationAffectShadowColor | 卡片高度是否影响阴影颜色               |
+| attr:elevationAffectShadowSize  | 卡片高度是否影响阴影宽度               |
+| attr:leftOffset                 | 卡片左半区阴影偏移量                 |
+| attr:rightOffset                | 卡片右半区阴影偏移量                 |
+| attr:topOffset                  | 卡片上半区阴影偏移量                 |
+| attr:bottomOffset               | 卡片右半区阴影偏移量                 |
+| attr:fixedContentWidth          | 控件宽度是否固定为内容宽度              |
+| attr:fixedContentHeight         | 控件高度是否固定为内容高度              |
+| attr:paperSyncCorner            | 同步卡片圆角与阴影圆角大小              |
+| attr:paperCorner                | 卡片圆角半径                     |
+| attr:linearBookEffect           | 线性书本阴影效果                   |
+| attr:bookRadius                 | 线性书本阴影偏移角度                 |
+| attr:curveShadowEffect          | 底部阴影扭曲效果                   |
+| attr:curvature                  | 底部阴影扭曲率                    |
+| attr:useShadowPool              | 是否启用阴影缓存池                  |
+| attr:bindLifeCircle             | 是否绑定生命周期                   |
+| attr:cardBackground             | 卡片背景                       |
+| attr:gradientColors             | 卡片背景渐变色                    |
+| attr:gradientSizeFollowView     | 卡片背景渐变色尺寸是否与控件尺寸一致（斜方向时配置） |
+| attr:gradientDirection          | 卡片背景渐变色方向                  |
+| attr:strokeWidth                | 描边尺寸                       |
+| attr:strokeColor                | 描边颜色                       |
 
 ## Change Logs.
 
 ### Kotlin版本
+### 1.0.1
+* 新增卡片背景属性cardBackground，使用方式与android:background一致，cardBackground只会在卡片的内容区域绘制；
+* 新增描边属性（strokeColor & strokeWidth），背景渐变色属性（gradientColors & gradientDirection & gradientSizeFollowView）
+* 便于直接创建描边控件，减少项目中xml的创建；
+* 背景属性的优先级 cardBackgroundColor > gradientColors > cardBackground;
+* 修复在部分场景下出现的锯齿情况或者阴影重叠或描边缺失的问题；
+
 ### 0.0.1
  * 新增卡片圆角与阴影圆角是否同步的属性，自由度更高
  * 新增底部线性类似于书本阴影的效果（不要吐槽命名）

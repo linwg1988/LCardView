@@ -1,13 +1,15 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
-    compileSdkVersion 28
+    compileSdk 33
 
     publishNonDefault true
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 28
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
     }
@@ -29,15 +31,3 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
 }
-
-//apply plugin: 'com.novoda.bintray-release'
-//
-//publish {
-//    userOrg = 'linwg1988'
-//    groupId = 'org.linwg1988'
-//    artifactId = 'lcardview'
-//    publishVersion = '1.5.4'
-//    desc = 'A libary user for custom a card view.'
-//    website = 'https://github.com/linwg1988/LCardView'
-//}
-

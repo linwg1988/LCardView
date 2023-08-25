@@ -80,13 +80,11 @@ class LinearShadow(private val colors: IntArray, percent: Float, private val par
         val dest = ShadowPool.getDirty(frame.width().toInt(), frame.height().toInt(),true)
         val meshCanvas = Canvas(dest)
         meshCanvas.drawBitmapMesh(bitmap, WIDTH, HEIGHT, verts, 0, null, 0, null)
-        Log.i("LCardView", "create curve bitmap at ${System.currentTimeMillis()}")
         ShadowPool.putDirty(bitmap)
         return dest
     }
 
     private fun newShader(colors: IntArray): LinearGradient {
-        Log.i("LCardView", "create LinearGradient part at $part  time at ${System.currentTimeMillis()}")
         return when (part) {
             IShadow.TOP -> LinearGradient(origin.left, origin.bottom, origin.left, origin.top, colors, percents, Shader.TileMode.CLAMP)
             IShadow.RIGHT -> LinearGradient(origin.left, origin.top, origin.right, origin.top, colors, percents, Shader.TileMode.CLAMP)
@@ -171,11 +169,12 @@ class LinearShadow(private val colors: IntArray, percent: Float, private val par
     }
 
     override fun draw(canvas: Canvas, path: Path, paint: Paint) {
-        canvas.save()
+        if(frame.width() < 0 || frame.height() < 0) return
         paint.shader = shader
         if (part == IShadow.BOTTOM) {
             when {
                 linearBookEffect -> {
+                    canvas.save()
                     canvas.clipRect(frame.left, frame.top, frame.centerX(), frame.bottom)
                     matrix.setRotate(-bookRadius, frame.left, frame.top)
                     shader?.setLocalMatrix(matrix)
@@ -187,22 +186,22 @@ class LinearShadow(private val colors: IntArray, percent: Float, private val par
                     matrix.setRotate(bookRadius, frame.right, frame.bottom)
                     shader?.setLocalMatrix(matrix)
                     canvas.drawRect(frame.left, frame.top, frame.right, frame.bottom, paint)
+                    canvas.restore()
                 }
                 curveShadowEffect -> {
+                    canvas.save()
                     canvas.clipRect(frame)
                     canvas.translate(frame.left, frame.top)
                     canvas.drawBitmap(meshBitmap!!, 0f, 0f, null)
+                    canvas.restore()
                 }
                 else -> {
-                    canvas.clipRect(frame)
                     canvas.drawRect(frame.left, frame.top, frame.right, frame.bottom, paint)
                 }
             }
         } else {
-            canvas.clipRect(frame)
             canvas.drawRect(frame.left, frame.top, frame.right, frame.bottom, paint)
         }
-        canvas.restore()
     }
 
     override fun recreateShader() {

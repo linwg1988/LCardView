@@ -8,9 +8,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import www.linwg.org.app.R;
 import www.linwg.org.lib.LCardView;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,11 +22,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final LCardView cardCR = findViewById(R.id.cardCR);
+        final LCardView cardBg = findViewById(R.id.cardBg);
         SeekBar sbLT = findViewById(R.id.sbLT);
         SeekBar sbRT = findViewById(R.id.sbRT);
         SeekBar sbRB = findViewById(R.id.sbRB);
         SeekBar sbLB = findViewById(R.id.sbLB);
         SeekBar sbAll = findViewById(R.id.sbAll);
+        SeekBar sbSW = findViewById(R.id.sbSW);
         sbLT.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -55,6 +59,105 @@ public class MainActivity extends AppCompatActivity {
                 cardCR.setCornerRadius(progress);
             }
         });
+        sbSW.setOnSeekBarChangeListener(new OnSeekBarChangeAdapter() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                cardBg.setStrokeWidth(progress);
+            }
+        });
+        CheckBox cbRes = findViewById(R.id.cbRes);
+        cbRes.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardBg.setCardBackgroundDrawableRes(isChecked ? R.mipmap.girl : 0);
+            }
+        });
+        CheckBox cbDrawable = findViewById(R.id.cbDrawable);
+        cbDrawable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardBg.setCardBackground(isChecked ? getDrawable(R.drawable.test) : null);
+            }
+        });
+
+        TextView tvLabel = findViewById(R.id.tvLabel);
+        RadioGroup rgGradientDirection = findViewById(R.id.rgGradientDirection);
+        RadioGroup rgStart = findViewById(R.id.rgStart);
+        RadioGroup rgCenter = findViewById(R.id.rgCenter);
+        RadioGroup rgEnd = findViewById(R.id.rgEnd);
+        View llColor = findViewById(R.id.llColor);
+        CheckBox cbGradient = findViewById(R.id.cbGradient);
+        CheckBox cbGradientSync = findViewById(R.id.cbGradientSync);
+        cbGradient.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                tvLabel.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                rgGradientDirection.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                llColor.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            }
+        });
+        cbGradientSync.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                cardBg.setGradientSizeFollowView(isChecked);
+            }
+        });
+        rgGradientDirection.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rbLTR:
+                        cardBg.setGradientDirection(LCardView.LEFT_TO_RIGHT);
+                        break;
+                    case R.id.rbTTB:
+                        cardBg.setGradientDirection(LCardView.TOP_TO_BOTTOM);
+                        break;
+                    case R.id.rbLTTRB:
+                        cardBg.setGradientDirection(LCardView.LEFT_TOP_TO_RIGHT_BOTTOM);
+                        break;
+                    case R.id.rbLBTRT:
+                        cardBg.setGradientDirection(LCardView.LEFT_BOTTOM_TO_RIGHT_TOP);
+                        break;
+                }
+            }
+        });
+        rgStart.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int startId = checkedId;
+                int endId = rgEnd.getCheckedRadioButtonId();
+                int centerId = rgCenter.getCheckedRadioButtonId();
+                int startColor = startId == R.id.rbRedStart ? Color.RED : startId == R.id.rbGreenStart ? Color.GREEN : Color.BLUE;
+                int endColor = endId == R.id.rbRedEnd ? Color.WHITE : endId == R.id.rbGrayEnd ? Color.GRAY : Color.BLACK;
+                int centerColor = centerId == R.id.rbRedCenter ? Color.YELLOW : centerId == R.id.rbGreenCenter ? Color.parseColor("#ff00ff") : Color.parseColor("#00ffff");
+                cardBg.setGradientColors(startColor, centerColor, endColor);
+            }
+        });
+        rgCenter.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int centerId = checkedId;
+                int endId = rgEnd.getCheckedRadioButtonId();
+                int startId = rgStart.getCheckedRadioButtonId();
+                int startColor = startId == R.id.rbRedStart ? Color.RED : startId == R.id.rbGreenStart ? Color.GREEN : Color.BLUE;
+                int endColor = endId == R.id.rbRedEnd ? Color.WHITE : endId == R.id.rbGrayEnd ? Color.GRAY : Color.BLACK;
+                int centerColor = centerId == R.id.rbRedCenter ? Color.YELLOW : centerId == R.id.rbGreenCenter ? Color.parseColor("#ff00ff") : Color.parseColor("#00ffff");
+                cardBg.setGradientColors(startColor, centerColor, endColor);
+            }
+        });
+        rgEnd.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int endId = checkedId;
+                int centerId = rgCenter.getCheckedRadioButtonId();
+                int startId = rgStart.getCheckedRadioButtonId();
+                int startColor = startId == R.id.rbRedStart ? Color.RED : startId == R.id.rbGreenStart ? Color.GREEN : Color.BLUE;
+                int endColor = endId == R.id.rbRedEnd ? Color.WHITE : endId == R.id.rbGrayEnd ? Color.GRAY : Color.BLACK;
+                int centerColor = centerId == R.id.rbRedCenter ? Color.YELLOW : centerId == R.id.rbGreenCenter ? Color.parseColor("#ff00ff") : Color.parseColor("#00ffff");
+                cardBg.setGradientColors(startColor, centerColor, endColor);
+            }
+        });
+
 
         final LCardView cardSS = findViewById(R.id.cardSS);
         final SeekBar sbAlpha = findViewById(R.id.sbAlpha);
