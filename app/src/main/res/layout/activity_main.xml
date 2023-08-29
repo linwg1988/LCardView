@@ -41,8 +41,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cornerRadius="10dp"
-                app:shadowSize="20dp"
-                app:shadowStartAlpha="50"
+                android:layout_marginHorizontal="10dp"
+                app:shadowSize="10dp"
+                app:shadowColor="#0aa"
+                app:shadowStartAlpha="155"
+                app:bottomOffset="5dp"
                 app:strokeColor="#0aa">
 
                 <LinearLayout

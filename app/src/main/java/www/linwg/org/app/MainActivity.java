@@ -94,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
                 tvLabel.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 rgGradientDirection.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 llColor.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                if(!isChecked){
+                    cardBg.setGradientColors();
+                }
             }
         });
         cbGradientSync.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

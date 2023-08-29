@@ -62,6 +62,7 @@ class RadialShadow(private val colors: IntArray, private val part: Int) : BaseSh
             center.x = centerX
             center.y = centerY
             shader = createShader()
+            makePath()
             return
         }
         //check center point change

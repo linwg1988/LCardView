@@ -11,11 +11,11 @@ dependencies {
 ### Kotlin gradle dependencies：
 ~~~groovy
 dependencies {
-    implementation 'io.github.linwg1988:lcardview-kt:1.0.1'
+    implementation 'io.github.linwg1988:lcardview-kt:1.0.2'
 }
 ~~~
 
-Kotlin 版本1.0.1 新增了部分属性(描边，渐变色等)，可有效减少shape.xml的创建</br>
+Kotlin 版本1.0.2 新增了部分属性(描边，渐变色等)，可有效减少shape.xml的创建</br>
 现在卡片式的设计还是比较常见的，设计师们常常天马行空的设计出各种好看(emmm)的的卡片样式，但是安卓原生的CardView的局限性还是比较大的，比如没办法设置阴影的颜色，阴影的透明度等等等等；那既要满足设计师们的要求且又不往包里面添加.9图片使,那可以试试这款卡片布局。<a href="screenshot/demo.apk" target="_blank">demo.apk</a></br>
 
 LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下面一些动图将展示LCardView具有哪些功能:
@@ -110,6 +110,9 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 ## Change Logs.
 
 ### Kotlin版本
+### 1.0.2
+* bug修复；
+
 ### 1.0.1
 * 新增卡片背景属性cardBackground，使用方式与android:background一致，cardBackground只会在卡片的内容区域绘制；
 * 新增描边属性（strokeColor & strokeWidth），背景渐变色属性（gradientColors & gradientDirection & gradientSizeFollowView）

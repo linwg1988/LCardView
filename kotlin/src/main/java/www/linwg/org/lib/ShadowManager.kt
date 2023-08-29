@@ -135,8 +135,8 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
 
     fun needDrawOffsetShadowColor(cardView: LCardView): Boolean {
         return lShadow.frame.right < cardView.paddingLeft || tShadow.frame.bottom < cardView.paddingTop
-                || rShadow.frame.left > cardView.paddingRight
-                || bShadow.frame.top > cardView.paddingBottom
+                || rShadow.frame.left > cardView.viewWidth - cardView.paddingRight
+                || bShadow.frame.top > cardView.viewHeight - cardView.paddingBottom
     }
 
     fun measureContentPath(

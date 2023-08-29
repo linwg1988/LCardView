@@ -510,8 +510,8 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             super.dispatchDraw(canvas)
             return
         }
-        canvas.save()
-        canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
+//        canvas.save()
+        val c = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
             pathPaint.xfermode = multiplyXfermode
             super.dispatchDraw(canvas)
@@ -524,7 +524,8 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             highVerPath.op(mContentPath, Path.Op.DIFFERENCE)
             canvas.drawPath(highVerPath, pathPaint)
         }
-        canvas.restore()
+        canvas.restoreToCount(c)
+//        canvas.restore()
         pathPaint.xfermode = null
     }
 
@@ -539,12 +540,16 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             val c = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
             bgPaint.color = shadowColor
             canvas.drawPath(inShadowPath, bgPaint)
-            shadowManager.onDraw(canvas, mPath, paint)
+
+            if (shadowSize > 0 && shadowAlpha > 0) {
+                shadowManager.onDraw(canvas, mPath, paint)
+            }
+
             pathPaint.xfermode = bgXfermode
             canvas.drawPath(mContentPath, pathPaint)
             canvas.restoreToCount(c)
             pathPaint.xfermode = null
-        } else {
+        } else if(shadowSize > 0 && shadowAlpha > 0){
             val c = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
             shadowManager.onDraw(canvas, mPath, paint)
             pathPaint.xfermode = bgXfermode
@@ -1134,6 +1139,11 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     fun setGradientColors(vararg colors: Int) {
+        if(colors.isEmpty()){
+            bgGradient = null
+            postInvalidate()
+            return
+        }
         if (colors.size == 1) {
             cardBackgroundColor = colors[0]
             postInvalidate()
