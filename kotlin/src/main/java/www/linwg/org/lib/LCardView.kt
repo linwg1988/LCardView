@@ -19,14 +19,22 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private val defaultShadowColor = Color.parseColor("#05000000")
     private val defaultCardBackgroundColor = 99999999
     private var cardElevation = 0
-    private var leftOffset = 0
-    private var topOffset = 0
-    private var rightOffset = 0
-    private var bottomOffset = 0
-    var effectLeftOffset = 0
-    var effectTopOffset = 0
-    var effectRightOffset = 0
-    var effectBottomOffset = 0
+    private var leftOffset = 0f
+    private var topOffset = 0f
+    private var rightOffset = 0f
+    private var bottomOffset = 0f
+    var leftShadowDecrement = 0f
+        private set
+    var topShadowDecrement = 0f
+        private set
+    var rightShadowDecrement = 0f
+        private set
+    var bottomShadowDecrement = 0f
+        private set
+    var effectLeftOffset = 0f
+    var effectTopOffset = 0f
+    var effectRightOffset = 0f
+    var effectBottomOffset = 0f
     private val colors = intArrayOf(
         defaultShadowColor,
         defaultShadowColor,
@@ -40,8 +48,8 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var strokeColor = 99999999
     private var cardBackgroundColor = defaultCardBackgroundColor
     private var bgDrawable: Drawable? = null
-    private var cornerRadius = 0
-    private var paperCorner = 0
+    private var cornerRadius = 0f
+    private var paperCorner = 0f
     private var elevationAffectShadowColor = false
     private var elevationAffectShadowSize = false
     private var isFixedContentHeight = false
@@ -68,22 +76,22 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var gradientDirection: Int = LEFT_TO_RIGHT
     private var gradientColorArray: IntArray? = null
     private val shadowManager = ShadowManager(colors, percent)
-    private var ltCornerRadius = 0
+    private var ltCornerRadius = 0f
         set(value) {
             field = value
             shadowManager.setCornerRadius(value, IShadow.LEFT_TOP)
         }
-    private var rtCornerRadius = 0
+    private var rtCornerRadius = 0f
         set(value) {
             field = value
             shadowManager.setCornerRadius(value, IShadow.RIGHT_TOP)
         }
-    private var rbCornerRadius = 0
+    private var rbCornerRadius = 0f
         set(value) {
             field = value
             shadowManager.setCornerRadius(value, IShadow.RIGHT_BOTTOM)
         }
-    private var lbCornerRadius = 0
+    private var lbCornerRadius = 0f
         set(value) {
             field = value
             shadowManager.setCornerRadius(value, IShadow.LEFT_BOTTOM)
@@ -160,22 +168,22 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                     typedArray.getBoolean(index, false).also { shadowManager.linearBookEffect = it }
                 }
                 R.styleable.LCardView_cornerRadius -> {
-                    cornerRadius = typedArray.getDimensionPixelSize(index, 0)
+                    cornerRadius = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_paperCorner -> {
-                    paperCorner = typedArray.getDimensionPixelSize(index, 0)
+                    paperCorner = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_leftTopCornerRadius -> {
-                    ltCornerRadius = typedArray.getDimensionPixelSize(index, 0)
+                    ltCornerRadius = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_leftBottomCornerRadius -> {
-                    lbCornerRadius = typedArray.getDimensionPixelSize(index, 0)
+                    lbCornerRadius = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_rightTopCornerRadius -> {
-                    rtCornerRadius = typedArray.getDimensionPixelSize(index, 0)
+                    rtCornerRadius = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_rightBottomCornerRadius -> {
-                    rbCornerRadius = typedArray.getDimensionPixelSize(index, 0)
+                    rbCornerRadius = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_elevation -> {
                     cardElevation = typedArray.getDimensionPixelSize(index, 0)
@@ -187,19 +195,19 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                     elevationAffectShadowSize = typedArray.getBoolean(index, false)
                 }
                 R.styleable.LCardView_leftOffset -> {
-                    leftOffset = typedArray.getDimensionPixelSize(index, 0)
+                    leftOffset = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_rightOffset -> {
-                    rightOffset = typedArray.getDimensionPixelSize(index, 0)
+                    rightOffset = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_topOffset -> {
-                    topOffset = typedArray.getDimensionPixelSize(index, 0)
+                    topOffset = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_bottomOffset -> {
-                    bottomOffset = typedArray.getDimensionPixelSize(index, 0)
+                    bottomOffset = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
                 R.styleable.LCardView_bookRadius -> {
-                    typedArray.getInteger(index, 2).also { shadowManager.setBookRadius(it) }
+                    typedArray.getInteger(index, 2).also { shadowManager.setBookRadius(it.toFloat()) }
                 }
                 R.styleable.LCardView_fixedContentWidth -> {
                     isFixedContentWidth = typedArray.getBoolean(index, false)
@@ -211,13 +219,26 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                     bindLifeCircle = typedArray.getBoolean(index, false)
                 }
                 R.styleable.LCardView_useShadowPool -> {
-                    useShadowPool = typedArray.getBoolean(index, false).also { shadowManager.useShadowPool = it }
+                    useShadowPool = typedArray.getBoolean(index, false)
+                        .also { shadowManager.useShadowPool = it }
                 }
                 R.styleable.LCardView_paperSyncCorner -> {
                     paperSyncCorner = typedArray.getBoolean(index, false)
                 }
                 R.styleable.LCardView_curvature -> {
                     shadowManager.setCurvature(typedArray.getFloat(index, 4f))
+                }
+                R.styleable.LCardView_leftShadowDecrement -> {
+                    leftShadowDecrement = typedArray.getDimensionPixelSize(index, 0).toFloat()
+                }
+                R.styleable.LCardView_topShadowDecrement -> {
+                    topShadowDecrement = typedArray.getDimensionPixelSize(index, 0).toFloat()
+                }
+                R.styleable.LCardView_rightShadowDecrement -> {
+                    rightShadowDecrement = typedArray.getDimensionPixelSize(index, 0).toFloat()
+                }
+                R.styleable.LCardView_bottomShadowDecrement -> {
+                    bottomShadowDecrement = typedArray.getDimensionPixelSize(index, 0).toFloat()
                 }
             }
         }
@@ -237,7 +258,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         if (elevationAffectShadowSize) {
             shadowSize = cardElevation + 12
         }
-        if (cornerRadius != 0) {
+        if (cornerRadius != 0f) {
             rbCornerRadius = cornerRadius
             rtCornerRadius = rbCornerRadius
             lbCornerRadius = rtCornerRadius
@@ -245,14 +266,16 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
         initOffset()
         var leftPadding = shadowSize + leftOffset
-        leftPadding = max(leftPadding, 0)
+        leftPadding = max(leftPadding, 0f)
         var topPadding = shadowSize + topOffset
-        topPadding = max(topPadding, 0)
+        topPadding = max(topPadding, 0f)
         var rightPadding = shadowSize + rightOffset
-        rightPadding = max(rightPadding, 0)
+        rightPadding = max(rightPadding, 0f)
         var bottomPadding = shadowSize + bottomOffset
-        bottomPadding = max(bottomPadding, 0)
-        super.setPadding(leftPadding, topPadding, rightPadding, bottomPadding)
+        bottomPadding = max(bottomPadding, 0f)
+        super.setPadding(
+            leftPadding.toInt(), topPadding.toInt(), rightPadding.toInt(), bottomPadding.toInt()
+        )
         if (bindLifeCircle && useShadowPool) {
             bindLifeCircle = shadowManager.bindLifeCircle(context)
         }
@@ -273,15 +296,15 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     private fun initOffset() {
-        val maxOffset = shadowSize / 2
+        val maxOffset = shadowSize / 2f
         leftOffset = min(maxOffset, leftOffset)
         topOffset = min(maxOffset, topOffset)
         rightOffset = min(maxOffset, rightOffset)
         bottomOffset = min(maxOffset, bottomOffset)
-        effectLeftOffset = min(leftOffset, 0)
-        effectTopOffset = min(topOffset, 0)
-        effectRightOffset = min(rightOffset, 0)
-        effectBottomOffset = min(bottomOffset, 0)
+        effectLeftOffset = min(leftOffset, 0f)
+        effectTopOffset = min(topOffset, 0f)
+        effectRightOffset = min(rightOffset, 0f)
+        effectBottomOffset = min(bottomOffset, 0f)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -300,7 +323,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                         hms = MeasureSpec.makeMeasureSpec(max(minHeight, MeasureSpec.getSize(hms)), heightMode)
                         super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                     }
-                    0 -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
+                    MeasureSpec.UNSPECIFIED -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                     else -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                 }
             }
@@ -312,7 +335,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                         hms = MeasureSpec.makeMeasureSpec(max(minHeight, MeasureSpec.getSize(hms)), heightMode)
                         super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                     }
-                    0 -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
+                    MeasureSpec.UNSPECIFIED -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                     else -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                 }
             }
@@ -324,7 +347,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                         hms = MeasureSpec.makeMeasureSpec(max(minHeight, MeasureSpec.getSize(hms)), heightMode)
                         super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                     }
-                    0 -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
+                    MeasureSpec.UNSPECIFIED -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                     else -> super.onMeasure(if (isFixedContentWidth) 0 else wms, if (isFixedContentHeight) 0 else hms)
                 }
             }
@@ -336,14 +359,29 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    private val minHeight: Int
+    private val minHeight: Float
         get() = max(ltCornerRadius, rtCornerRadius) + max(lbCornerRadius, rbCornerRadius)
 
-    private val minWidth: Int
+    private val minWidth: Float
         get() = max(ltCornerRadius, lbCornerRadius) + max(rtCornerRadius, rbCornerRadius)
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        val realW = w - paddingLeft - paddingRight
+        val realH = h - paddingTop - paddingBottom
+        val min = min(realH / 2f, realW / 2f)
+        if (ltCornerRadius > min) {
+            ltCornerRadius = min
+        }
+        if (rtCornerRadius > min) {
+            rtCornerRadius = min
+        }
+        if (lbCornerRadius > min) {
+            lbCornerRadius = min
+        }
+        if (rbCornerRadius > min) {
+            rbCornerRadius = min
+        }
         if (w != oldw || h != oldh) {
             viewWidth = w
             viewHeight = h
@@ -506,11 +544,10 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     override fun dispatchDraw(canvas: Canvas) {
-        if (!paperSyncCorner && paperCorner == 0) {
+        if (!paperSyncCorner && paperCorner == 0f) {
             super.dispatchDraw(canvas)
             return
         }
-//        canvas.save()
         val c = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
             pathPaint.xfermode = multiplyXfermode
@@ -525,13 +562,11 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             canvas.drawPath(highVerPath, pathPaint)
         }
         canvas.restoreToCount(c)
-//        canvas.restore()
         pathPaint.xfermode = null
     }
 
     private val outShadowPath = Path()
     private val inShadowPath = Path()
-    private val clearXfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     private val multiplyXfermode = PorterDuffXfermode(PorterDuff.Mode.MULTIPLY)
     private val bgXfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
 
@@ -618,13 +653,37 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     @JvmOverloads
-    fun setLeftTopCornerRadius(leftTopCornerRadius: Int, prompt: Boolean = true) {
+    fun setLeftShadowDecrement(l: Float, prompt: Boolean = true) {
+        this.leftShadowDecrement = l
+        realDraw(prompt)
+    }
+
+    @JvmOverloads
+    fun setTopShadowDecrement(l: Float, prompt: Boolean = true) {
+        this.topShadowDecrement = l
+        realDraw(prompt)
+    }
+
+    @JvmOverloads
+    fun setBottomShadowDecrement(l: Float, prompt: Boolean = true) {
+        this.bottomShadowDecrement = l
+        realDraw(prompt)
+    }
+
+    @JvmOverloads
+    fun setRightShadowDecrement(l: Float, prompt: Boolean = true) {
+        this.rightShadowDecrement = l
+        realDraw(prompt)
+    }
+
+    @JvmOverloads
+    fun setLeftTopCornerRadius(leftTopCornerRadius: Float, prompt: Boolean = true) {
         var cornerRadius = leftTopCornerRadius
         if (this.ltCornerRadius == cornerRadius) {
             return
         }
-        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2)
-        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2)
+        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2f)
+        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2f)
         if (this.ltCornerRadius == cornerRadius) {
             return
         }
@@ -633,13 +692,13 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     @JvmOverloads
-    fun setRightTopCornerRadius(rightTopCornerRadius: Int, prompt: Boolean = true) {
+    fun setRightTopCornerRadius(rightTopCornerRadius: Float, prompt: Boolean = true) {
         var cornerRadius = rightTopCornerRadius
         if (this.rtCornerRadius == cornerRadius) {
             return
         }
-        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2)
-        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2)
+        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2f)
+        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2f)
         if (this.rtCornerRadius == cornerRadius) {
             return
         }
@@ -648,13 +707,13 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     @JvmOverloads
-    fun setRightBottomCornerRadius(rightBottomCornerRadius: Int, prompt: Boolean = true) {
+    fun setRightBottomCornerRadius(rightBottomCornerRadius: Float, prompt: Boolean = true) {
         var cornerRadius = rightBottomCornerRadius
         if (this.rbCornerRadius == cornerRadius) {
             return
         }
-        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2)
-        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2)
+        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2f)
+        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2f)
         if (this.rbCornerRadius == rightBottomCornerRadius) {
             return
         }
@@ -663,13 +722,13 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     @JvmOverloads
-    fun setLeftBottomCornerRadius(leftBottomCornerRadius: Int, prompt: Boolean = true) {
+    fun setLeftBottomCornerRadius(leftBottomCornerRadius: Float, prompt: Boolean = true) {
         var cornerRadius = leftBottomCornerRadius
         if (this.lbCornerRadius == cornerRadius) {
             return
         }
-        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2)
-        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2)
+        cornerRadius = min(cornerRadius, (viewWidth - paddingLeft - paddingRight) / 2f)
+        cornerRadius = min(cornerRadius, (viewHeight - paddingTop - paddingBottom) / 2f)
         if (this.lbCornerRadius == cornerRadius) {
             return
         }
@@ -769,11 +828,18 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     @JvmOverloads
-    fun setCornerRadius(radius: Int, prompt: Boolean = true) {
+    fun setCornerRadius(radius: Float, prompt: Boolean = true) {
         if (cornerRadius == radius) {
             return
         }
-        cornerRadius = radius
+        val realW = viewWidth - paddingLeft - paddingRight
+        val realH = viewHeight - paddingTop - paddingBottom
+        val min = min(radius, min(realH / 2f, realW / 2f))
+        rbCornerRadius = min
+        rtCornerRadius = min
+        lbCornerRadius = min
+        ltCornerRadius = min
+        cornerRadius = min
         rbCornerRadius = cornerRadius
         rtCornerRadius = rbCornerRadius
         lbCornerRadius = rtCornerRadius
@@ -795,11 +861,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         if (shadowManager.curveShadowEffect == b) {
             return
         }
-        val shouldReInitColor = shadowManager.fluidShape == ADSORPTION
         shadowManager.curveShadowEffect = b
-        if (shouldReInitColor) {
-            initColors(shadowColor)
-        }
         realDraw(prompt)
     }
 
@@ -813,7 +875,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     @JvmOverloads
-    fun setPaperCorner(c: Int, prompt: Boolean = true) {
+    fun setPaperCorner(c: Float, prompt: Boolean = true) {
         if (paperCorner == c) {
             return
         }
@@ -828,7 +890,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     @JvmOverloads
-    fun setBookRadius(r: Int, prompt: Boolean = true) {
+    fun setBookRadius(r: Float, prompt: Boolean = true) {
         shadowManager.setBookRadius(r)
         realDraw(prompt)
     }
@@ -879,45 +941,46 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private fun onShadowSizeChange() {
         initOffset()
         var leftPadding = shadowSize + leftOffset
-        leftPadding = max(leftPadding, 0)
+        leftPadding = max(leftPadding, 0f)
         var topPadding = shadowSize + topOffset
-        topPadding = max(topPadding, 0)
+        topPadding = max(topPadding, 0f)
         var rightPadding = shadowSize + rightOffset
-        rightPadding = max(rightPadding, 0)
+        rightPadding = max(rightPadding, 0f)
         var bottomPadding = shadowSize + bottomOffset
-        bottomPadding = max(bottomPadding, 0)
+        bottomPadding = max(bottomPadding, 0f)
         val ol = effectLeftOffset
-        effectLeftOffset = if (leftPadding == 0) {
+        effectLeftOffset = if (leftPadding == 0f) {
             shadowSize + leftOffset
         } else {
-            0
+            0f
         }
         val ot = effectTopOffset
-        effectTopOffset = if (topPadding == 0) {
+        effectTopOffset = if (topPadding == 0f) {
             shadowSize + topOffset
         } else {
-            0
+            0f
         }
         val or = effectRightOffset
-        effectRightOffset = if (rightPadding == 0) {
+        effectRightOffset = if (rightPadding == 0f) {
             shadowSize + rightOffset
         } else {
-            0
+            0f
         }
         val ob = effectBottomOffset
-        effectBottomOffset = if (bottomPadding == 0) {
+        effectBottomOffset = if (bottomPadding == 0f) {
             shadowSize + bottomOffset
         } else {
-            0
+            0f
         }
 
-        val needReCreateDrawable = (paddingRight == 0 || rightPadding == 0) || (paddingLeft == 0 || leftPadding == 0)
-                || (paddingTop == 0 || topPadding == 0) || (paddingBottom == 0 || bottomPadding == 0)
-                || (ol != effectLeftOffset) || (ot != effectTopOffset) || (or != effectRightOffset) || (ob != effectBottomOffset)
+        val needReCreateDrawable =
+            (paddingRight == 0 || rightPadding == 0f) || (paddingLeft == 0 || leftPadding == 0f) || (paddingTop == 0 || topPadding == 0f) || (paddingBottom == 0 || bottomPadding == 0f) || (ol != effectLeftOffset) || (ot != effectTopOffset) || (or != effectRightOffset) || (ob != effectBottomOffset)
         if (needReCreateDrawable) {
             realDraw(false)
         }
-        super.setPadding(leftPadding, topPadding, rightPadding, bottomPadding)
+        super.setPadding(
+            leftPadding.toInt(), topPadding.toInt(), rightPadding.toInt(), bottomPadding.toInt()
+        )
     }
 
     fun getShadowColor(): Int {
@@ -928,7 +991,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         return cardBackgroundColor
     }
 
-    fun getCornerRadius(): Int {
+    fun getCornerRadius(): Float {
         return cornerRadius
     }
 
@@ -940,19 +1003,19 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         return elevationAffectShadowSize
     }
 
-    fun getLeftTopCornerRadius(): Int {
+    fun getLeftTopCornerRadius(): Float {
         return ltCornerRadius
     }
 
-    fun getRightTopCornerRadius(): Int {
+    fun getRightTopCornerRadius(): Float {
         return rtCornerRadius
     }
 
-    fun getRightBottomCornerRadius(): Int {
+    fun getRightBottomCornerRadius(): Float {
         return rbCornerRadius
     }
 
-    fun getLeftBottomCornerRadius(): Int {
+    fun getLeftBottomCornerRadius(): Float {
         return lbCornerRadius
     }
 
@@ -968,8 +1031,8 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         invalidate()
     }
 
-    fun setShadowOffsetCenter(offset: Int) {
-        val maxOffset = shadowSize / 2
+    fun setShadowOffsetCenter(offset: Float) {
+        val maxOffset = shadowSize / 2f
         val leftOffset = min(maxOffset, offset)
         val rightOffset = min(maxOffset, offset)
         val topOffset = min(maxOffset, offset)
@@ -984,31 +1047,31 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         onShadowSizeChange()
     }
 
-    fun getLeftOffset(): Int {
+    fun getLeftOffset(): Float {
         return leftOffset
     }
 
-    fun setLeftOffset(leftOffset: Int) {
+    fun setLeftOffset(leftOffset: Float) {
         var offset = leftOffset
-        val maxOffset = shadowSize / 2
+        val maxOffset = shadowSize / 2f
         offset = min(maxOffset, offset)
         if (this.leftOffset == offset) {
             return
         }
         this.leftOffset = offset
         var leftPadding = shadowSize + this.leftOffset
-        leftPadding = max(leftPadding, 0)
+        leftPadding = max(leftPadding, 0f)
         val lastEffect = effectLeftOffset
-        effectLeftOffset = if (leftPadding == 0) {
+        effectLeftOffset = if (leftPadding == 0f) {
             offset + shadowSize
         } else {
-            0
+            0f
         }
-        val paddingLeft = paddingLeft
-        val needReCreateDrawable : Boolean
+        val paddingLeft = paddingLeft.toFloat()
+        val needReCreateDrawable: Boolean
         if (paddingLeft != leftPadding) {
-            needReCreateDrawable = paddingLeft == 0 || leftPadding == 0
-            super.setPadding(leftPadding, paddingTop, paddingRight, paddingBottom)
+            needReCreateDrawable = true
+            super.setPadding(leftPadding.toInt(), paddingTop, paddingRight, paddingBottom)
         } else {
             needReCreateDrawable = effectLeftOffset != lastEffect
         }
@@ -1017,31 +1080,31 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    fun getTopOffset(): Int {
+    fun getTopOffset(): Float {
         return topOffset
     }
 
-    fun setTopOffset(topOffset: Int) {
+    fun setTopOffset(topOffset: Float) {
         var offset = topOffset
-        val maxOffset = shadowSize / 2
+        val maxOffset = shadowSize / 2f
         offset = min(maxOffset, offset)
         if (this.topOffset == offset) {
             return
         }
         this.topOffset = offset
         var topPadding = shadowSize + this.topOffset
-        topPadding = max(topPadding, 0)
+        topPadding = max(topPadding, 0f)
         val lastEffect = effectTopOffset
-        effectTopOffset = if (topPadding == 0) {
+        effectTopOffset = if (topPadding == 0f) {
             this.topOffset + shadowSize
         } else {
-            0
+            0f
         }
-        val paddingTop = paddingTop
-        val needReCreateDrawable : Boolean
+        val paddingTop = paddingTop.toFloat()
+        val needReCreateDrawable: Boolean
         if (paddingTop != topPadding) {
-            needReCreateDrawable = paddingTop == 0 || topPadding == 0
-            super.setPadding(paddingLeft, topPadding, paddingRight, paddingBottom)
+            needReCreateDrawable = paddingTop == 0f || topPadding == 0f
+            super.setPadding(paddingLeft, topPadding.toInt(), paddingRight, paddingBottom)
         } else {
             needReCreateDrawable = effectTopOffset != lastEffect
         }
@@ -1050,31 +1113,31 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    fun getRightOffset(): Int {
+    fun getRightOffset(): Float {
         return rightOffset
     }
 
-    fun setRightOffset(rightOffset: Int) {
+    fun setRightOffset(rightOffset: Float) {
         var offset = rightOffset
-        val maxOffset = shadowSize / 2
+        val maxOffset = shadowSize / 2f
         offset = min(maxOffset, offset)
         if (this.rightOffset == offset) {
             return
         }
         this.rightOffset = offset
         var rightPadding = shadowSize + this.rightOffset
-        rightPadding = max(rightPadding, 0)
+        rightPadding = max(rightPadding, 0f)
         val lastEffect = effectRightOffset
-        effectRightOffset = if (rightPadding == 0) {
+        effectRightOffset = if (rightPadding == 0f) {
             this.rightOffset + shadowSize
         } else {
-            0
+            0f
         }
-        val needReCreateDrawable : Boolean
-        val paddingRight = paddingRight
+        val needReCreateDrawable: Boolean
+        val paddingRight = paddingRight.toFloat()
         if (paddingRight != rightPadding) {
-            needReCreateDrawable = paddingRight == 0 || rightPadding == 0
-            super.setPadding(paddingLeft, paddingTop, rightPadding, paddingBottom)
+            needReCreateDrawable = true
+            super.setPadding(paddingLeft, paddingTop, rightPadding.toInt(), paddingBottom)
         } else {
             needReCreateDrawable = effectRightOffset != lastEffect
         }
@@ -1083,31 +1146,31 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         }
     }
 
-    fun getBottomOffset(): Int {
+    fun getBottomOffset(): Float {
         return bottomOffset
     }
 
-    fun setBottomOffset(bottomOffset: Int) {
+    fun setBottomOffset(bottomOffset: Float) {
         var offset = bottomOffset
-        val maxOffset = shadowSize / 2
+        val maxOffset = shadowSize / 2f
         offset = min(maxOffset, offset)
         if (this.bottomOffset == offset) {
             return
         }
         this.bottomOffset = offset
         var bottomPadding = shadowSize + this.bottomOffset
-        bottomPadding = max(bottomPadding, 0)
+        bottomPadding = max(bottomPadding, 0f)
         val lastEffect = effectBottomOffset
-        effectBottomOffset = if (bottomPadding == 0) {
+        effectBottomOffset = if (bottomPadding == 0f) {
             this.bottomOffset + shadowSize
         } else {
-            0
+            0f
         }
-        val needReCreateDrawable : Boolean
-        val paddingBottom = paddingBottom
+        val needReCreateDrawable: Boolean
+        val paddingBottom = paddingBottom.toFloat()
         if (paddingBottom != bottomPadding) {
-            needReCreateDrawable = paddingBottom == 0 || bottomPadding == 0
-            super.setPadding(paddingLeft, paddingTop, paddingRight, bottomPadding)
+            needReCreateDrawable = paddingBottom == 0f || bottomPadding == 0f
+            super.setPadding(paddingLeft, paddingTop, paddingRight, bottomPadding.toInt())
         } else {
             needReCreateDrawable = effectBottomOffset != lastEffect
         }
@@ -1157,12 +1220,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         if (strokeWidth == i) return
         strokeWidth = i
         shadowManager.measureContentPath(
-            this,
-            paperSyncCorner,
-            paperCorner,
-            mContentPath,
-            mStrokePath,
-            strokeWidth
+            this, paperSyncCorner, paperCorner, mContentPath, mStrokePath, strokeWidth
         )
         postInvalidate()
     }
@@ -1175,23 +1233,42 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
      * Shadow should be recreate only once after multi property changed.
      */
     inner class Property {
+        fun leftShadowDecrement(r: Float): Property {
+            setLeftShadowDecrement(r, false)
+            return this
+        }
 
-        fun leftTopCornerRadius(r: Int): Property {
+        fun topShadowDecrement(r: Float): Property {
+            setTopShadowDecrement(r, false)
+            return this
+        }
+
+        fun rightShadowDecrement(r: Float): Property {
+            setRightShadowDecrement(r, false)
+            return this
+        }
+
+        fun bottomShadowDecrement(r: Float): Property {
+            setBottomShadowDecrement(r, false)
+            return this
+        }
+
+        fun leftTopCornerRadius(r: Float): Property {
             setLeftTopCornerRadius(r, false)
             return this
         }
 
-        fun rightTopCornerRadius(r: Int): Property {
+        fun rightTopCornerRadius(r: Float): Property {
             setRightTopCornerRadius(r, false)
             return this
         }
 
-        fun rightBottomCornerRadius(r: Int): Property {
+        fun rightBottomCornerRadius(r: Float): Property {
             setRightBottomCornerRadius(r, false)
             return this
         }
 
-        fun leftBottomCornerRadius(r: Int): Property {
+        fun leftBottomCornerRadius(r: Float): Property {
             setLeftBottomCornerRadius(r, false)
             return this
         }
@@ -1216,7 +1293,7 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             return this
         }
 
-        fun cornerRadius(cr: Int): Property {
+        fun cornerRadius(cr: Float): Property {
             setCornerRadius(cr, false)
             return this
         }
@@ -1251,12 +1328,12 @@ class LCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             return this
         }
 
-        fun bookRadius(r: Int): Property {
+        fun bookRadius(r: Float): Property {
             setBookRadius(r, false)
             return this
         }
 
-        fun paperCorner(r: Int): Property {
+        fun paperCorner(r: Float): Property {
             setPaperCorner(r, false)
             return this
         }

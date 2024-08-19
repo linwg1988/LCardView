@@ -95,7 +95,7 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 | attr:paperSyncCorner            | 同步卡片圆角与阴影圆角大小              |
 | attr:paperCorner                | 卡片圆角半径                     |
 | attr:linearBookEffect           | 线性书本阴影效果                   |
-| attr:bookRadius                 | 线性书本阴影偏移角度                 |
+| attr:bookRadius                 | 线性书本阴影偏移倍率（底部阴影宽度）         |
 | attr:curveShadowEffect          | 底部阴影扭曲效果                   |
 | attr:curvature                  | 底部阴影扭曲率                    |
 | attr:useShadowPool              | 是否启用阴影缓存池                  |
@@ -106,10 +106,22 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 | attr:gradientDirection          | 卡片背景渐变色方向                  |
 | attr:strokeWidth                | 描边尺寸                       |
 | attr:strokeColor                | 描边颜色                       |
+| attr:leftShadowDecrement        | 左侧阴影缩减尺寸                   |
+| attr:topShadowDecrement         | 顶部阴影缩减尺寸                   |
+| attr:rightShadowDecrement       | 右侧阴影缩减尺寸                   |
+| attr:bottomShadowDecrement      | 底部阴影缩减尺寸                   |
 
 ## Change Logs.
 
 ### Kotlin版本
+### 1.0.3
+* 一些 bug 修复，圆角精度改为浮点类型，最大圆角自动修正为最小宽高的一半，避免阴影重叠；
+* 底部扭曲不在限制阴影形状；
+* 阴影 bitmap 缓存池修改，最大限制从个数改为实际占用内存；
+* 新增属性 leftShadowDecrement,topShadowDecrement,rightShadowDecrement,bottomShadowDecrement 可对四边阴影的宽度进行缩减，
+* 相对于 showDowOffset 属性来说，阴影宽度的缩减不会导致阴影位置的变化，但会对阴影的圆角进行扭曲；
+* 调整 bookRadius 属性，设置后底部阴影中间会在往上扭曲（阴影宽度 size * bookRadius），并往两侧线性递减
+
 ### 1.0.2
 * bug修复；
 

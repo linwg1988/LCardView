@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.Lifecycle
@@ -62,26 +61,11 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
         set(value) {
             field = value
             bShadow.linearBookEffect = value
-            curveShadowEffect = false
         }
     var curveShadowEffect: Boolean = false
         set(value) {
             field = value
             bShadow.curveShadowEffect = value
-            if (value) {
-                fluidShape = LCardView.LINEAR
-                shaderArray.forEach {
-                    if (it != bShadow) {
-                        it.markColorAlphaHalf()
-                    }
-                }
-            } else {
-                shaderArray.forEach {
-                    if (it != bShadow) {
-                        it.finishColorAlphaHalf()
-                    }
-                }
-            }
         }
 
     var fluidShape: Int = LCardView.ADSORPTION
@@ -142,7 +126,7 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
     fun measureContentPath(
         cardView: LCardView,
         paperSyncCorner: Boolean,
-        paperCorner: Int,
+        paperCorner: Float,
         path: Path,
         strokePath: Path,
         strokeWidth: Int
@@ -237,7 +221,7 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
                 strokePath.close()
             }
         } else {
-            if (paperCorner == 0) {
+            if (paperCorner == 0f) {
                 path.moveTo(startX, startY)
                 path.lineTo(viewWidth - stopX, startY)
                 path.lineTo(viewWidth - stopX, viewHeight - stopY)
@@ -268,69 +252,82 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
         val effectRightOffset = cardView.effectRightOffset
         val effectBottomOffset = cardView.effectBottomOffset
         val ltRadius = shadowSize + ltShader.cornerRadius
-        if (ltRadius == 0) {
+        val leftShadowDecrement = cardView.leftShadowDecrement.coerceAtMost(shadowSize.toFloat())
+        val topShadowDecrement = cardView.topShadowDecrement.coerceAtMost(shadowSize.toFloat())
+        val rightShadowDecrement = cardView.rightShadowDecrement.coerceAtMost(shadowSize.toFloat())
+        val bottomShadowDecrement = cardView.bottomShadowDecrement.coerceAtMost(shadowSize.toFloat())
+
+        if (ltRadius == 0f) {
             ltShader.frame.setEmpty()
         } else {
-            val centerX: Float = if (paddingLeft > 0) ltRadius.toFloat() else ltRadius - effectLeftOffset.toFloat()
-            val centerY: Float = if (paddingTop > 0) ltRadius.toFloat() else ltRadius - effectTopOffset.toFloat()
+            val centerX: Float = if (paddingLeft > 0) ltRadius else ltRadius - effectLeftOffset
+            val centerY: Float = if (paddingTop > 0) ltRadius else ltRadius - effectTopOffset
+            ltShader.setDecrement(leftShadowDecrement, topShadowDecrement)
             ltShader.frame[centerX - ltRadius, centerY - ltRadius, centerX + ltRadius] = centerY + ltRadius
             ltShader.onFrameChange(centerX, centerY, ltRadius)
         }
         val rtRadius = shadowSize + rtShader.cornerRadius
-        if (rtRadius == 0) {
+        if (rtRadius == 0f) {
             rtShader.frame.setEmpty()
         } else {
-            val centerX: Float = if (paddingRight > 0) viewWidth - rtRadius.toFloat() else viewWidth - rtRadius + effectRightOffset.toFloat()
-            val centerY: Float = if (paddingTop > 0) rtRadius.toFloat() else rtRadius - effectTopOffset.toFloat()
+            val centerX: Float = if (paddingRight > 0) viewWidth - rtRadius else viewWidth - rtRadius + effectRightOffset
+            val centerY: Float = if (paddingTop > 0) rtRadius else rtRadius - effectTopOffset
+            rtShader.setDecrement(rightShadowDecrement, topShadowDecrement)
             rtShader.frame[centerX - rtRadius, centerY - rtRadius, centerX + rtRadius] = centerY + rtRadius
             rtShader.onFrameChange(centerX, centerY, rtRadius)
         }
         val rbRadius = shadowSize + rbShader.cornerRadius
-        if (rbRadius == 0) {
+        if (rbRadius == 0f) {
             rbShader.frame.setEmpty()
         } else {
-            val centerX: Float = if (paddingRight > 0) viewWidth - rbRadius.toFloat() else viewWidth - rbRadius + effectRightOffset.toFloat()
-            val centerY: Float = if (paddingBottom > 0) viewHeight - rbRadius.toFloat() else viewHeight - rbRadius + effectBottomOffset.toFloat()
+            val centerX: Float = if (paddingRight > 0) viewWidth - rbRadius else viewWidth - rbRadius + effectRightOffset
+            val centerY: Float = if (paddingBottom > 0) viewHeight - rbRadius else viewHeight - rbRadius + effectBottomOffset
+            rbShader.setDecrement(rightShadowDecrement, bottomShadowDecrement)
             rbShader.frame[centerX - rbRadius, centerY - rbRadius, centerX + rbRadius] = centerY + rbRadius
             rbShader.onFrameChange(centerX, centerY, rbRadius)
         }
         val lbRadius = shadowSize + lbShader.cornerRadius
-        if (lbRadius == 0) {
+        if (lbRadius == 0f) {
             lbShader.frame.setEmpty()
         } else {
-            val centerX: Float = if (paddingLeft > 0) lbRadius.toFloat() else lbRadius - effectLeftOffset.toFloat()
-            val centerY: Float = if (paddingBottom > 0) viewHeight - lbRadius.toFloat() else viewHeight - lbRadius + effectBottomOffset.toFloat()
+            val centerX: Float = if (paddingLeft > 0) lbRadius else lbRadius - effectLeftOffset
+            val centerY: Float = if (paddingBottom > 0) viewHeight - lbRadius else viewHeight - lbRadius + effectBottomOffset
+            lbShader.setDecrement(leftShadowDecrement, bottomShadowDecrement)
             lbShader.frame[centerX - lbRadius, centerY - lbRadius, centerX + lbRadius] = centerY + lbRadius
             lbShader.onFrameChange(centerX, centerY, lbRadius)
         }
-        var left = if (paddingLeft > 0) ltRadius.toFloat() else ltRadius - effectLeftOffset.toFloat()
-        var right = if (paddingRight > 0) (viewWidth - rtRadius).toFloat() else viewWidth - rtRadius + effectRightOffset.toFloat()
-        var top: Float = if (paddingTop > 0) 0f else -effectTopOffset.toFloat()
+        var left = if (paddingLeft > 0) ltRadius else ltRadius - effectLeftOffset
+        var right = if (paddingRight > 0) (viewWidth - rtRadius) else viewWidth - rtRadius + effectRightOffset
+        var top: Float = if (paddingTop > 0) 0f else -effectTopOffset
         var bottom = top + shadowSize
+        tShadow.setDecrement(0f, topShadowDecrement)
         tShadow.frame[left, top, right] = bottom
         tShadow.onFrameChange()
         right =
-            if (paddingRight > 0) viewWidth.toFloat() else viewWidth + effectRightOffset.toFloat()
+            if (paddingRight > 0) viewWidth.toFloat() else viewWidth + effectRightOffset
         left = right - shadowSize
-        top = if (paddingTop > 0) rtRadius.toFloat() else rtRadius - effectTopOffset.toFloat()
+        top = if (paddingTop > 0) rtRadius else rtRadius - effectTopOffset
         bottom =
-            if (paddingBottom > 0) (viewHeight - rbRadius).toFloat() else viewHeight - rbRadius + effectBottomOffset.toFloat()
+            if (paddingBottom > 0) (viewHeight - rbRadius) else viewHeight - rbRadius + effectBottomOffset
+        rShadow.setDecrement(rightShadowDecrement,0f)
         rShadow.frame[left, top, right] = bottom
         rShadow.onFrameChange()
-        left = if (paddingLeft > 0) lbRadius.toFloat() else lbRadius - effectLeftOffset.toFloat()
+        left = if (paddingLeft > 0) lbRadius else lbRadius - effectLeftOffset
         right =
-            if (paddingRight > 0) (viewWidth - rbRadius).toFloat() else viewWidth - rbRadius + effectRightOffset.toFloat()
+            if (paddingRight > 0) (viewWidth - rbRadius) else viewWidth - rbRadius + effectRightOffset
         top =
-            if (paddingBottom > 0) (viewHeight - shadowSize).toFloat() else viewHeight - shadowSize + effectBottomOffset.toFloat()
+            if (paddingBottom > 0) (viewHeight - shadowSize).toFloat() else viewHeight - shadowSize + effectBottomOffset
         bottom = top + shadowSize
+        bShadow.setDecrement(0f,bottomShadowDecrement)
         bShadow.frame[left, top, right] = bottom
         bShadow.onFrameChange()
         right =
             if (paddingLeft > 0) shadowSize.toFloat() else shadowSize.toFloat() - effectLeftOffset
         left = right - shadowSize
-        top = if (paddingTop > 0) ltRadius.toFloat() else ltRadius - effectTopOffset.toFloat()
+        top = if (paddingTop > 0) ltRadius else ltRadius - effectTopOffset
         bottom =
-            if (paddingBottom > 0) (viewHeight - lbRadius).toFloat() else viewHeight - lbRadius + effectBottomOffset.toFloat()
+            if (paddingBottom > 0) (viewHeight - lbRadius) else viewHeight - lbRadius + effectBottomOffset
+        lShadow.setDecrement(leftShadowDecrement,0f)
         lShadow.frame[left, top, right] = bottom
         lShadow.onFrameChange()
 
@@ -396,7 +393,7 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
         }
     }
 
-    fun setCornerRadius(value: Int, part: Int) {
+    fun setCornerRadius(value: Float, part: Int) {
         when (part) {
             IShadow.LEFT_TOP -> ltShader.cornerRadius = value
             IShadow.RIGHT_TOP -> rtShader.cornerRadius = value
@@ -422,10 +419,6 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
     }
 
     fun onShapeModeChange(shape: Int): Boolean {
-        if (curveShadowEffect) {
-            //curve effect can only play well on linear shadow
-            return false
-        }
         if (shape != LCardView.ADSORPTION && shape != LCardView.LINEAR) {
             return false
         }
@@ -439,8 +432,8 @@ internal class ShadowManager(colors: IntArray, percent: Float = 0.33f) {
         return true
     }
 
-    fun setBookRadius(r: Int) {
-        bShadow.bookRadius = r.toFloat()
+    fun setBookRadius(r: Float) {
+        bShadow.bookRadius = r
     }
 
     fun onDestroy() {

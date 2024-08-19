@@ -5,48 +5,105 @@ import android.graphics.Color
 import android.graphics.Shader
 import android.util.Log
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.collections.set
 
 class ShadowPool private constructor() {
 
     companion object {
+        /**
+         * Shader cache size
+         */
         private var currentSize: Int = 0
+
+        /**
+         * Max shader cache size.
+         */
+        private const val maxSize: Int = 8 * 12
+
+        /**
+         * Dirty bitmap pool size
+         */
         private var currentDirtySize: Int = 0
+
+        /**
+         * Max dirty size in bitmap pool.  16MB
+         */
+        private const val maxDirtySize: Int = 16 * 1024 * 1024
+
+        /**
+         * Linear mesh bitmap pool size
+         */
         private var currentMeshSize: Int = 0
-        private const val maxSize: Int = 32
-        private const val maxDirtySize: Int = 16
-        private const val maxMeshSize: Int = 8
+
+        /**
+         * Max linear mesh size in bitmap pool size.  8MB
+         */
+        private const val maxMeshSize: Int = 8 * 1024 * 1024
+
+        /**
+         * Radial mesh bitmap pool size
+         */
+        private var currentMeshRadialSize: Int = 0
+
+        /**
+         * Max radial mesh size in bitmap pool size.  16MB
+         */
+        private const val maxMeshRadialSize: Int = 16 * 1024 * 1024
         private val head: Entry<Key, Shader> = Entry(Key(), null)
         private val linearShadowPool: HashMap<Key, Entry<Key, Shader>> = HashMap()
         private val linearKeyQueue = ArrayDeque<LinearKey>(20)
         private val radialKeyQueue = ArrayDeque<RadialKey>(20)
         private val dirtyKeyQueue = ArrayDeque<DirtyBitmapKey>(20)
         private val meshKeyQueue = ArrayDeque<MeshBitmapKey>(20)
+        private val meshRadialKeyQueue = ArrayDeque<MeshRadialBitmapKey>(20)
 
-        private val dirtyBitmapHead: Entry<DirtyBitmapKey, Bitmap> = Entry(DirtyBitmapKey(), null)
-        private val dirtyBitmapPool: HashMap<DirtyBitmapKey, Entry<DirtyBitmapKey, Bitmap>> = HashMap()
+        private val dirtyBitmapHead: Entry<DirtyBitmapKey, BitmapEntry> =
+            Entry(DirtyBitmapKey(), null)
+        private val dirtyBitmapPool: HashMap<DirtyBitmapKey, Entry<DirtyBitmapKey, BitmapEntry>> =
+            HashMap()
 
-        private val meshBitmapHead: Entry<MeshBitmapKey, Bitmap> = Entry(MeshBitmapKey(), null)
-        private val meshBitmapPool: HashMap<MeshBitmapKey, Entry<MeshBitmapKey, Bitmap>> = HashMap()
+        private val meshBitmapHead: Entry<MeshBitmapKey, BitmapEntry> = Entry(MeshBitmapKey(), null)
+        private val meshBitmapPool: HashMap<MeshBitmapKey, Entry<MeshBitmapKey, BitmapEntry>> =
+            HashMap()
 
-        private fun getMeshKey(width: Int, height: Int, curvature: Int, color: Int): MeshBitmapKey {
+        private val meshRadialBitmapHead: Entry<MeshRadialBitmapKey, BitmapEntry> =
+            Entry(MeshRadialBitmapKey(), null)
+        private val meshRadialBitmapPool: HashMap<MeshRadialBitmapKey, Entry<MeshRadialBitmapKey, BitmapEntry>> =
+            HashMap()
+
+        private fun getMeshKey(
+            width: Int,
+            height: Int,
+            curvature: Int,
+            bookRadius: Float = 0f,
+            isLinear: Boolean,
+            color: Int
+        ): MeshBitmapKey {
             var key = meshKeyQueue.poll()
             if (key == null) {
-                key = MeshBitmapKey(width, height, curvature, color)
+                key = MeshBitmapKey(width, height, curvature, bookRadius, isLinear, color)
             } else {
-                key.init(width, height, curvature, color)
+                key.init(width, height, curvature, bookRadius, isLinear, color)
             }
             return key
         }
 
-        fun putMesh(width: Int, height: Int, curvature: Int, color: Int, bitmap: Bitmap) {
-            val key = getMeshKey(width, height, curvature, color)
+        fun putMesh(
+            width: Int,
+            height: Int,
+            curvature: Int,
+            color: Int,
+            bookRadius: Float = 0f,
+            isLinear: Boolean,
+            bitmap: Bitmap
+        ) {
+            val key = getMeshKey(width, height, curvature, bookRadius, isLinear, color)
             var entry = meshBitmapPool[key]
             if (entry == null) {
-                entry = Entry(key, bitmap)
+                val v = BitmapEntry(bitmap, bitmap.allocationByteCount)
+                entry = Entry(key, v)
                 meshBitmapPool[key] = entry
-                currentMeshSize++
+                currentMeshSize += v.size
             } else {
                 if (meshKeyQueue.size <= 20) {
                     meshKeyQueue.offer(key)
@@ -59,8 +116,15 @@ class ShadowPool private constructor() {
             trimMesh()
         }
 
-        fun getMesh(width: Int, height: Int, curvature: Int, color: Int): Bitmap? {
-            val key = getMeshKey(width, height, curvature, color)
+        fun getMesh(
+            width: Int,
+            height: Int,
+            curvature: Int,
+            bookRadius: Float = 0f,
+            isLinear: Boolean,
+            color: Int
+        ): Bitmap? {
+            val key = getMeshKey(width, height, curvature, bookRadius, isLinear, color)
             val entry = meshBitmapPool[key] ?: return null
             if (meshKeyQueue.size <= 20) {
                 meshKeyQueue.offer(key)
@@ -69,7 +133,7 @@ class ShadowPool private constructor() {
             entry.next = meshBitmapHead.next
             entry.prev = meshBitmapHead
             ensureEntry(entry)
-            return entry.value
+            return entry.value?.value
         }
 
         private fun trimMesh() {
@@ -83,9 +147,92 @@ class ShadowPool private constructor() {
                 if (meshKeyQueue.size <= 20) {
                     meshKeyQueue.offer(last.key)
                 }
-                putDirty(last.value!!,true)
+                putDirty(last.value!!.value, true)
                 Log.i("LCardView", "ShadowPool trim one mesh bitmap and put it to the dirty pool.")
-                currentMeshSize--
+                currentMeshSize -= last.value.size
+            }
+        }
+
+        private fun getMeshRadialKey(
+            width: Int,
+            height: Int,
+            widthDecrement: Float,
+            heightDecrement: Float,
+            part: Int,
+            color: Int
+        ): MeshRadialBitmapKey {
+            var key = meshRadialKeyQueue.poll()
+            if (key == null) {
+                key =
+                    MeshRadialBitmapKey(width, height, widthDecrement, heightDecrement, part, color)
+            } else {
+                key.init(width, height, widthDecrement, heightDecrement, part, color)
+            }
+            return key
+        }
+
+        fun putMeshRadial(
+            width: Int,
+            height: Int,
+            widthDecrement: Float,
+            heightDecrement: Float,
+            part: Int,
+            color: Int,
+            bitmap: Bitmap
+        ) {
+            val key = getMeshRadialKey(width, height, widthDecrement, heightDecrement, part, color)
+            var entry = meshRadialBitmapPool[key]
+            if (entry == null) {
+                val v = BitmapEntry(bitmap, bitmap.allocationByteCount)
+                entry = Entry(key, v)
+                meshRadialBitmapPool[key] = entry
+                currentMeshRadialSize += v.size
+            } else {
+                if (meshRadialKeyQueue.size <= 20) {
+                    meshRadialKeyQueue.offer(key)
+                }
+                breakEntry(entry)
+            }
+            entry.next = meshRadialBitmapHead
+            entry.prev = meshRadialBitmapHead.prev
+            ensureEntry(entry)
+            trimMeshRadial()
+        }
+
+        fun getMeshRadial(
+            width: Int,
+            height: Int,
+            widthDecrement: Float,
+            heightDecrement: Float,
+            part: Int,
+            color: Int
+        ): Bitmap? {
+            val key = getMeshRadialKey(width, height, widthDecrement, heightDecrement, part, color)
+            val entry = meshRadialBitmapPool[key] ?: return null
+            if (meshRadialKeyQueue.size <= 20) {
+                meshRadialKeyQueue.offer(key)
+            }
+            breakEntry(entry)
+            entry.next = meshRadialBitmapHead.next
+            entry.prev = meshRadialBitmapHead
+            ensureEntry(entry)
+            return entry.value?.value
+        }
+
+        private fun trimMeshRadial() {
+            while (currentMeshRadialSize > maxMeshRadialSize) {
+                val last = meshRadialBitmapHead.prev
+                if (last == null || last == meshRadialBitmapHead) {
+                    return
+                }
+                breakEntry(last)
+                meshRadialBitmapPool.remove(last.key)
+                if (meshRadialKeyQueue.size <= 20) {
+                    meshRadialKeyQueue.offer(last.key)
+                }
+                putDirty(last.value!!.value, true)
+                Log.i("LCardView", "ShadowPool trim one mesh bitmap and put it to the dirty pool.")
+                currentMeshRadialSize -= last.value.size
             }
         }
 
@@ -103,9 +250,10 @@ class ShadowPool private constructor() {
             val key = getDirtyKey(bitmap.width, bitmap.height, isMesh)
             var entry = dirtyBitmapPool[key]
             if (entry == null) {
-                entry = Entry(key, bitmap)
+                val v = BitmapEntry(bitmap, bitmap.allocationByteCount)
+                entry = Entry(key, v)
                 dirtyBitmapPool[key] = entry
-                currentDirtySize++
+                currentDirtySize += v.size
             } else {
                 breakEntry(entry)
                 if (dirtyKeyQueue.size <= 20) {
@@ -120,15 +268,16 @@ class ShadowPool private constructor() {
 
         fun getDirty(width: Int, height: Int, isMesh: Boolean = false): Bitmap {
             val key = getDirtyKey(width, height, isMesh)
-            val entry = dirtyBitmapPool[key]
-                    ?: return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val entry = dirtyBitmapPool[key] ?: return Bitmap.createBitmap(
+                width, height, Bitmap.Config.ARGB_8888
+            )
             if (dirtyKeyQueue.size <= 20) {
                 dirtyKeyQueue.offer(key)
             }
             breakEntry(entry)
             dirtyBitmapPool.remove(key)
-            entry.value?.eraseColor(Color.TRANSPARENT)
-            return entry.value!!
+            entry.value?.value?.eraseColor(Color.TRANSPARENT)
+            return entry.value!!.value
         }
 
         private fun trimDirty() {
@@ -142,22 +291,32 @@ class ShadowPool private constructor() {
                     dirtyKeyQueue.offer(last.key)
                 }
                 dirtyBitmapPool.remove(last.key)
-                last.value?.recycle()
+                last.value?.value?.recycle()
                 Log.i("LCardView", "ShadowPool trim one dirty bitmap.")
-                currentDirtySize--
+                currentDirtySize -= last.value!!.size
             }
         }
 
-        fun getLinearKey(width: Int, height: Int, mode: Int, part: Int, color: Int): LinearKey {
+        fun getLinearKey(
+            width: Int,
+            height: Int,
+            widthDecrement: Float,
+            heightDecrement: Float,
+            mode: Int,
+            part: Int,
+            color: Int
+        ): LinearKey {
             var key = linearKeyQueue.poll()
             if (key == null) {
                 key = LinearKey()
             }
-            key.init(width, height, mode, part, color)
+            key.init(width, height, widthDecrement, heightDecrement, mode, part, color)
             return key
         }
 
-        fun getRadialKey(width: Int, height: Int, mode: Int, part: Int, cornerRadius: Int, color: Int): RadialKey {
+        fun getRadialKey(
+            width: Int, height: Int, mode: Int, part: Int, cornerRadius: Float, color: Int
+        ): RadialKey {
             var key = radialKeyQueue.poll()
             if (key == null) {
                 key = RadialKey()
@@ -251,20 +410,47 @@ class Entry<K, V>(val key: K, val value: V?) {
     var next: Entry<K, V>? = null
 }
 
+internal class BitmapEntry constructor(val value: Bitmap, val size: Int)
+
 open class Key
 
-data class LinearKey(var width: Int = 0, var height: Int = 0, var mode: Int = 0, var part: Int = 0, var startColor: Int = 0) : Key() {
-    fun init(width: Int, height: Int, mode: Int, part: Int, color: Int) {
+data class LinearKey(
+    var width: Int = 0,
+    var height: Int = 0,
+    var widthDecrement: Float = 0f,
+    var heightDecrement: Float = 0f,
+    var mode: Int = 0,
+    var part: Int = 0,
+    var startColor: Int = 0
+) : Key() {
+    fun init(
+        width: Int,
+        height: Int,
+        widthDecrement: Float,
+        heightDecrement: Float,
+        mode: Int,
+        part: Int,
+        color: Int
+    ) {
         this.width = width
         this.height = height
+        this.widthDecrement = widthDecrement
+        this.heightDecrement = heightDecrement
         this.mode = mode
         this.part = part
         this.startColor = color
     }
 }
 
-data class RadialKey(var width: Int = 0, var height: Int = 0, var mode: Int = 0, var part: Int = 0, var cornerRadius: Int = 0, var startColor: Int = 0) : Key() {
-    fun init(width: Int, height: Int, mode: Int, part: Int, cornerRadius: Int, color: Int) {
+data class RadialKey(
+    var width: Int = 0,
+    var height: Int = 0,
+    var mode: Int = 0,
+    var part: Int = 0,
+    var cornerRadius: Float = 0f,
+    var startColor: Int = 0
+) : Key() {
+    fun init(width: Int, height: Int, mode: Int, part: Int, cornerRadius: Float, color: Int) {
         this.width = width
         this.height = height
         this.mode = mode
@@ -282,11 +468,52 @@ data class DirtyBitmapKey(var width: Int = 0, var height: Int = 0, var isMesh: B
     }
 }
 
-data class MeshBitmapKey(var width: Int = 0, var height: Int = 0, var curvature: Int = 0, var startColor: Int = 0) : Key() {
-    fun init(width: Int, height: Int, curvature: Int, color: Int) {
+data class MeshBitmapKey(
+    var width: Int = 0,
+    var height: Int = 0,
+    var curvature: Int = 0,
+    var bookRadius: Float = 0f,
+    var isLinear: Boolean = false,
+    var startColor: Int = 0
+) : Key() {
+    fun init(
+        width: Int,
+        height: Int,
+        curvature: Int,
+        bookRadius: Float = 0f,
+        isLinear: Boolean,
+        color: Int
+    ) {
         this.width = width
         this.height = height
         this.curvature = curvature
+        this.bookRadius = bookRadius
+        this.isLinear = isLinear
+        this.startColor = color
+    }
+}
+
+data class MeshRadialBitmapKey(
+    var width: Int = 0,
+    var height: Int = 0,
+    var widthDecrement: Float = 0f,
+    var heightDecrement: Float = 0f,
+    var part: Int = 0,
+    var startColor: Int = 0
+) : Key() {
+    fun init(
+        width: Int,
+        height: Int,
+        widthDecrement: Float,
+        heightDecrement: Float,
+        part: Int,
+        color: Int
+    ) {
+        this.width = width
+        this.height = height
+        this.widthDecrement = widthDecrement
+        this.heightDecrement = heightDecrement
+        this.part = part
         this.startColor = color
     }
 }

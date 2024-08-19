@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import www.linwg.org.app.R;
 import www.linwg.org.lib.LCardView;
 
 public class CardListActivity extends AppCompatActivity {
@@ -29,8 +28,8 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     private static class Ad extends RecyclerView.Adapter<VH> {
-        private Context context;
-        private String[] arr = {
+        private final Context context;
+        private final String[] arr = {
                 "属性说明:1.useShadowPool为true时，列表中的着色器以及Bitmap将储存于缓存池中一起使用",
                 "如果一个列表中的卡片样式都一致的话，建议开启此功能",
                 "2.开启缓存池后，建议同时设置bindLifeCircle为true",

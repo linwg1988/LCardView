@@ -17,6 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CardListActivity"/>
+        <activity android:name=".TestActivity" />
+        <activity android:name=".CornerSettingFragment" />
     </application>
 
 </manifest>

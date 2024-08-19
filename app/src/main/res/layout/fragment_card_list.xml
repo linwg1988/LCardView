@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvToList1"
+        android:layout_width="match_parent"
+        android:text="列表1"
+        android:padding="16dp"
+        android:textColor="#000"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:background="#b2b2b2"
+        android:layout_height="1px"/>
+
+    <TextView
+        android:id="@+id/tvToList2"
+        android:layout_width="match_parent"
+        android:text="列表2"
+        android:padding="16dp"
+        android:textColor="#000"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="类似于书本阴影效果（底部阴影切割为两半，分别倾斜对应角度）"
+        android:textColor="#333"
+        android:textSize="12sp" />
+
+    <CheckBox
+        android:id="@+id/cbBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开启书本阴影效果"
+        android:textColor="#333"
+        android:textSize="10sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="切斜角度(0-120)"
+            android:textColor="#333"
+            android:textSize="10sp" />
+
+        <SeekBar
+            android:id="@+id/sbAngle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="120"
+            android:min="0"
+            android:progress="0" />
+
+    </LinearLayout>
+
+</LinearLayout>
