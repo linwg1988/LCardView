@@ -4,6 +4,12 @@ buildscript {
     ext.kotlin_version = '1.7.10'
 
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/releases'
+        }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
         gradlePluginPortal()
         google()
         mavenCentral()
@@ -20,6 +26,12 @@ buildscript {
 
 allprojects {
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/releases'
+        }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
         google()
         maven { url "https://jitpack.io" }//必须添加这行
         maven {

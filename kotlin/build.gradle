@@ -68,7 +68,7 @@ publishing {
 
             groupId "io.github.linwg1988"
             artifactId "lcardview-kt"
-            version "1.0.3"
+            version "1.0.4"
 
             afterEvaluate {
                 from components.release

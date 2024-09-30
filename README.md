@@ -11,7 +11,7 @@ dependencies {
 ### Kotlin gradle dependencies：
 ~~~groovy
 dependencies {
-    implementation 'io.github.linwg1988:lcardview-kt:1.0.2'
+    implementation 'io.github.linwg1988:lcardview-kt:1.0.4'
 }
 ~~~
 
@@ -26,9 +26,24 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 <img src="screenshot/cn.gif" width="32%" />
 
 ### shadowOffset
- * 可单独或同时设置4边的偏移量，偏移量为正时往外偏移，最大值为阴影宽度的一半，偏移量为负时往内偏移（未测试极端情况下最小偏移多少）。
+ * 可单独或同时设置4边的偏移量，偏移量为正时往外偏移，最大值为阴影宽度的一半，偏移量为负时往内偏移。
  
 <img src="screenshot/offset.gif" width="32%" />
+
+### leftShadowDecrement & topShadowDecrement & rightShadowDecrement & bottomShadowDecrement
+* 可设置4边阴影的缩减尺寸，最大值为阴影宽度，该设置不会影响阴影所在的位置。
+
+### cardBackground
+* 卡片背景，和cardBackgroundColor相比，可以设置图片或者Drawable文件。
+
+### gradientColors
+* 卡片背景渐变色，xml中以英文逗号分隔，可避免创建drawable文件。
+
+### gradientDirection
+* 卡片背景渐变色方向。
+
+### gradientSizeFollowView
+* 卡片背景渐变色尺寸是否与控件尺寸一致（斜方向时配置）,若false,渐变色的形状大小为边长为最大长宽的一个正方形。
 
 ### shadowColor/shadowAlpha
  * 阴影的颜色与透明度分开设置，所以设置 **shadowColor(color:Int)** 时参数 color 的 alpha 是不起作用的，要设置透明度需使用 **setShadowAlpha(alpha:Int)** 。
@@ -114,6 +129,11 @@ LCardView继承FrameLayout,使用方式与之并没有什么太大区别，下�
 ## Change Logs.
 
 ### Kotlin版本
+
+### 1.0.4
+* bug 修复:修复底部阴影在卡片高度变化时重建的情况；
+* 因shadowDecrement参数影响，阴影实际绘制的区域如果为空或被其它内容覆盖，则不参与绘制过程
+
 ### 1.0.3
 * 一些 bug 修复，圆角精度改为浮点类型，最大圆角自动修正为最小宽高的一半，避免阴影重叠；
 * 底部扭曲不在限制阴影形状；

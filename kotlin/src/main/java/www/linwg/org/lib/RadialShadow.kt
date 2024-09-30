@@ -386,6 +386,8 @@ class RadialShadow(private val colors: IntArray, private val part: Int) : BaseSh
         }
 
         if (meshBitmap != null) {
+            val shadowSize = shaderCornerRadius - cornerRadius
+            if(widthDecrement >= shadowSize && heightDecrement >= shadowSize) return
             when (part) {
                 IShadow.RIGHT_TOP -> {
                     canvas.save()

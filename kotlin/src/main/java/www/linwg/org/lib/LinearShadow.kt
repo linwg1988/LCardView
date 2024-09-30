@@ -190,7 +190,7 @@ class LinearShadow(private val colors: IntArray, percent: Float, private val par
 
     fun onFrameChange() {
         val needRecreate: Boolean
-        if (origin.isEmpty || shader == null || meshTypeChange || colorChange || (part == IShadow.BOTTOM && (curvatureChange || bookRadiusChange || meshBitmap == null)) || decrementChange) {
+        if (origin.isEmpty || shader == null || meshTypeChange || colorChange || (part == IShadow.BOTTOM && ((curveShadowEffect && (curvatureChange || meshBitmap == null)) || (linearBookEffect && (bookRadiusChange || meshBitmap == null)))) || decrementChange) {
             colorChange = false
             curvatureChange = false
             decrementChange = false
@@ -279,7 +279,8 @@ class LinearShadow(private val colors: IntArray, percent: Float, private val par
     }
 
     override fun draw(canvas: Canvas, path: Path, paint: Paint) {
-        if (frame.width() < 0 || frame.height() < 0) return
+        if (frame.width() <= 0 || frame.height() <= 0) return
+        if(frame.width() - widthDecrement <= 0f || frame.height() - heightDecrement <= 0f) return
         paint.shader = shader
         if (part == IShadow.BOTTOM && (linearBookEffect || curveShadowEffect)) {
             canvas.save()
