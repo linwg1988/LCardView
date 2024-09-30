@@ -9,3 +9,5 @@
 /captures
 .externalNativeBuild
 sering.gpg
+/.idea/kotlinc.xml
+/.idea/deploymentTargetSelector.xml
